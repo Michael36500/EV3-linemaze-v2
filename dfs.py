@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from typing import *
+import random
 
 
 @dataclass
@@ -99,53 +100,51 @@ def follow_line(mapa: List[List[str]], pos_from: Pos, pos_to: Pos) -> Tuple[Pos,
     # print(f'direction: {direction}')
 
     pos_final = pos_to
-    itera = 0
 
-    while mapa[pos_final.y][pos_final.x] not in '├ ┤ ┬ ┴ ┼ ▫ ■':
-        itera += 1
-        # print(
-        #     mapa[pos_final.y][pos_final.x],
-        #     direction,
-        #     itera
-        # )
-        match mapa[pos_final.y][pos_final.x]:
-            case '─':
-                if direction == 'left':     pos_final.x -= 1
-                elif direction == 'right':  pos_final.x += 1
-                else: raise Exception('something fucked up')
-        
-            case '│':
-                if direction == 'up':       pos_final.y -= 1
-                elif direction == 'down':   pos_final.y += 1
-                else: raise Exception('something fucked up"')
-        
+    # print(
+    #     mapa[pos_final.y][pos_final.x],
+    #     direction,
+    #     itera
+    # )
 
-            case '┌':
-                if direction == 'up':       pos_final.x += 1;   direction = 'right'
-                elif direction == 'left':     pos_final.y += 1;   direction = 'down'
-                else: raise Exception('something fucked up"')
-        
-            case '┐':
-                if direction == 'up':       pos_final.x -= 1;   direction = 'left'
-                elif direction == 'right':    pos_final.y += 1;   direction = 'down'
-                else: raise Exception('something fucked up"')
-            
-            case '┘':
-                if direction == 'down':     pos_final.x -= 1;   direction = 'left'
-                elif direction == 'right':    pos_final.y -= 1;   direction = 'up'
-                else: raise Exception('something fucked up"')
-            
-            case '└':
-                if direction == 'down':     pos_final.x += 1;   direction = 'right'
-                elif direction == 'left':    pos_final.y -= 1;   direction = 'up'
-                else: raise Exception('something fucked up"')
+    match mapa[pos_final.y][pos_final.x]:
+        case '─':
+            if direction == 'left':     pos_final.x -= 1
+            elif direction == 'right':  pos_final.x += 1
+            else: raise Exception('something fucked up')
+    
+        case '│':
+            if direction == 'up':       pos_final.y -= 1
+            elif direction == 'down':   pos_final.y += 1
+            else: raise Exception('something fucked up"')
+    
 
-            case '▫':
-                pass
+        case '┌':
+            if direction == 'up':       pos_final.x += 1;   direction = 'right'
+            elif direction == 'left':     pos_final.y += 1;   direction = 'down'
+            else: raise Exception('something fucked up"')
+    
+        case '┐':
+            if direction == 'up':       pos_final.x -= 1;   direction = 'left'
+            elif direction == 'right':    pos_final.y += 1;   direction = 'down'
+            else: raise Exception('something fucked up"')
+        
+        case '┘':
+            if direction == 'down':     pos_final.x -= 1;   direction = 'left'
+            elif direction == 'right':    pos_final.y -= 1;   direction = 'up'
+            else: raise Exception('something fucked up"')
+        
+        case '└':
+            if direction == 'down':     pos_final.x += 1;   direction = 'right'
+            elif direction == 'left':    pos_final.y -= 1;   direction = 'up'
+            else: raise Exception('something fucked up"')
+
+        case '▫':
+            pass
         
 
     # print(f'final: {pos_final}')
-    return pos_final, itera
+    return pos_final
 
 
 def obfuscate(mapa: List[List[str]]) -> List[List[str]]:
@@ -153,36 +152,32 @@ def obfuscate(mapa: List[List[str]]) -> List[List[str]]:
 
 
 def main():
+    random.seed(42)
+
     secret_map = load_mapa()
     pprint_mapa(secret_map)
 
-    # explored_map = obfuscate(secret_map)
-    # pprint_mapa(explored_map)
+    explored_map = obfuscate(secret_map)
+    pprint_mapa(explored_map)
 
-    queue = [(Pos(1, 0), 0)]
+    queue = [Pos(1, 0)]
     visited = []
 
     while queue != []:
-        # print()
-        pos, itera = queue.pop(-1)
-        # print(pos)
+        pos = queue.pop(-1)
+        
+        if secret_map[pos.y][pos.x] in '─ │ ┌ ┐ ┘  └':
+            queue.append(follow_line(secret_map, pos))
+        else:
+            neighs = get_neighbours_near(secret_map, pos)
 
-        for neighboor in get_neighbours_near(secret_map, pos):
-            # print(f'pos:\t\t{pos}')
-            # print(f'neighboor:\t{neighboor}')
-            pol = follow_line(
-                    secret_map,
-                    pos,
-                    neighboor,
-            )
-            
-
-            if pol not in visited:
-                visited.append(pol)
-                queue.append(pol)
-            
+            for neigh in neighs:
+                if neigh not in visited:
+                    queue.append(neigh)
+                    visited.append(neigh)
 
 
+    
 
 
 if __name__ == '__main__':
