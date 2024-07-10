@@ -7,7 +7,7 @@ class Pos:
     x: int
     y: int
 
-def pprint_mapa(mapa: List[List[int]]) -> None:
+def pprint_mapa(mapa: List[List[str]]) -> None:
     for lin in mapa:
         for char in lin:
             print(char, end='')
@@ -18,7 +18,7 @@ def pprint_mapa(mapa: List[List[int]]) -> None:
         print()
 
 
-def load_mapa() -> List[List[int]]:
+def load_mapa() -> List[List[str]]:
     mapa = []
     with open('maze') as f:
         for line in f:
@@ -31,7 +31,7 @@ def load_mapa() -> List[List[int]]:
     return mapa
 
 
-def get_neighbours_near(mapa: List[List[int]], pos: Pos) -> List[Pos]:
+def get_neighbours_near(mapa: List[List[str]], pos: Pos) -> List[Pos]:
     # ─ │ ┌ ┐ ┘ ├ └ ┤ ┬ ┴ ┼ ▫ ■
     current_char = mapa[pos.y][pos.x]
     neighbours_close = []
@@ -71,13 +71,16 @@ def get_neighbours_near(mapa: List[List[int]], pos: Pos) -> List[Pos]:
         neighbours_close.append(Pos(pos.x, pos.y + 1))
     
     if current_char in '■':
-        raise Exception('you are at the end of the maze')
+        print('+-------------+')
+        print('| end of maze |')
+        print('+-------------+')
+        # raise Exception('you are at the end of the maze')
 
 
     return neighbours_close
 
 
-def follow_line(mapa: List[List[int]], pos_from: Pos, pos_to: Pos) -> Pos:
+def follow_line(mapa: List[List[str]], pos_from: Pos, pos_to: Pos) -> Tuple[Pos, int]:
     # ─ │ ┌ ┐ ┘ ├ └ ┤ ┬ ┴ ┼ ▫ ■
     # if there is not a need to follow a line
     # if mapa[pos_to.y][pos_to.x] in '├ ┤ ┬ ┴ ┼ ▫ ■':
@@ -91,19 +94,20 @@ def follow_line(mapa: List[List[int]], pos_from: Pos, pos_to: Pos) -> Pos:
         if pos_from.x > pos_to.x:   direction = 'left'
         else:                       direction = 'right'
 
-
-    print(f'from: {pos_from} to: {pos_to}')
-    print(f'from: {mapa[pos_from.y][pos_from.x]} to: {mapa[pos_to.y][pos_to.x]}')
-    print(f'direction: {direction}')
+    # print(f'from: {pos_from} to: {pos_to}')
+    # print(f'from: {mapa[pos_from.y][pos_from.x]} to: {mapa[pos_to.y][pos_to.x]}')
+    # print(f'direction: {direction}')
 
     pos_final = pos_to
-    iter = 0
+    itera = 0
 
     while mapa[pos_final.y][pos_final.x] not in '├ ┤ ┬ ┴ ┼ ▫ ■':
-        iter += 1
-        # print(mapa[pos_final.y][pos_final.x])
-        # print(direction)
-        # print()
+        itera += 1
+        # print(
+        #     mapa[pos_final.y][pos_final.x],
+        #     direction,
+        #     itera
+        # )
         match mapa[pos_final.y][pos_final.x]:
             case '─':
                 if direction == 'left':     pos_final.x -= 1
@@ -132,8 +136,8 @@ def follow_line(mapa: List[List[int]], pos_from: Pos, pos_to: Pos) -> Pos:
                 else: raise Exception('something fucked up"')
             
             case '└':
-                if direction == 'down':     pos_final.x += 1;   direction = 'left'
-                elif direction == 'right':    pos_final.y -= 1;   direction = 'up'
+                if direction == 'down':     pos_final.x += 1;   direction = 'right'
+                elif direction == 'left':    pos_final.y -= 1;   direction = 'up'
                 else: raise Exception('something fucked up"')
 
             case '▫':
@@ -141,28 +145,41 @@ def follow_line(mapa: List[List[int]], pos_from: Pos, pos_to: Pos) -> Pos:
         
 
     # print(f'final: {pos_final}')
-    return pos_final, iter
+    return pos_final, itera
+
+
+def obfuscate(mapa: List[List[str]]) -> List[List[str]]:
+    return [['.'] * (len(mapa[0])-1)] * len(mapa)
 
 
 def main():
-    mapa = load_mapa()
-    pprint_mapa(mapa)
+    secret_map = load_mapa()
+    pprint_mapa(secret_map)
 
-    queue = [Pos(1, 0)]
+    # explored_map = obfuscate(secret_map)
+    # pprint_mapa(explored_map)
+
+    queue = [(Pos(1, 0), 0)]
+    visited = []
 
     while queue != []:
-        pos = queue.pop(-1)
-        print(pos)
-        for neighboor in get_neighbours_near(mapa, pos):
-            print(f'pos:\t\t{pos}')
-            print(f'neighboor:\t{neighboor}')
-            input()
-            queue.append(
-                follow_line(
-                    mapa,
+        # print()
+        pos, itera = queue.pop(-1)
+        # print(pos)
+
+        for neighboor in get_neighbours_near(secret_map, pos):
+            # print(f'pos:\t\t{pos}')
+            # print(f'neighboor:\t{neighboor}')
+            pol = follow_line(
+                    secret_map,
                     pos,
                     neighboor,
-                ))
+            )
+            
+
+            if pol not in visited:
+                visited.append(pol)
+                queue.append(pol)
             
 
 
