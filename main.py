@@ -11,7 +11,8 @@ def tremaux(robot: Robot) -> None:
 
 
 def main():
-    robot = Robot()
+    map_size = 10
+    robot = Robot(map_size)
     tremaux(robot)
 
 

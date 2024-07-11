@@ -1,6 +1,6 @@
 from typing import *
-from dataclasses import dataclass
-from pydantic import BaseModel
+# from dataclasses import dataclass
+# from pydantic import BaseModel
 
 
 
@@ -13,7 +13,47 @@ class Position():
 
     def forward(self, orient: str) -> None:
         # check if all alrigh
-                
+        ## check if orient is valid
+        if orient not in ['up', 'right', 'down', 'left']: 
+            raise ValueError('Invalid orientation')
+
+        ## check if out of bounds
+        if orient == 'up' and self.y == 0:      
+            raise ValueError('Out of bounds')
+        if orient == 'right' and self.x == len(self.mapa[0]):   
+            raise ValueError('Out of bounds')
+        if orient == 'down' and self.y == len(self.mapa):
+            raise ValueError('Out of bounds')
+        if orient == 'left' and self.x == 0:
+            raise ValueError('Out of bounds')
+
+        ## check if wall
+        current: str = self.mapa[self.y][self.x]
+        match current:
+            case '─':   
+                if orient == 'up' or orient == 'down':      raise ValueError('Wall')
+            case '│':
+                if orient == 'right' or orient == 'left':   raise ValueError('Wall')
+            case '┌':
+                if orient == 'left' or orient == 'up':      raise ValueError('Wall')
+            case '┐':
+                if orient == 'right' or orient == 'up':     raise ValueError('Wall')
+            case '└':
+                if orient == 'left' or orient == 'down':    raise ValueError('Wall')
+            case '┘':
+                if orient == 'right' or orient == 'down':   raise ValueError('Wall')
+            case '├':
+                if orient == 'right':                       raise ValueError('Wall')
+            case '┤':
+                if orient == 'left':                        raise ValueError('Wall')
+            case '┬':
+                if orient == 'down':                        raise ValueError('Wall')
+            case '┴':
+                if orient == 'up':                          raise ValueError('Wall')
+            case '┼':
+                pass
+            case _:
+                                                            raise ValueError('Invalid character')                
 
 
         if orient == 'up':    self.y -= 1
