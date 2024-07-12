@@ -150,9 +150,9 @@ def pprint_map(map: list, maze: list, pos) -> None:
 
 
 
-def tremaux(robot: Robot) -> None:
-    debug = False
+def tremaux(robot: Robot, debug=True) -> None:
     seed = random.randrange(sys.maxsize)
+    # seed = 2548946025440068861
     random.seed(seed)
     print(f'Seed: {seed}', file=open('seed', 'w'))
 
@@ -169,12 +169,13 @@ def tremaux(robot: Robot) -> None:
         # print(f'Itera: {itera}')
         current = robot.where_am_i()
         my_maze[robot.pos.y][robot.pos.x] = current
-        # print('------')
-        # print(f'pos: {robot.pos.x}, {robot.pos.y}')
-        # print(f'orient: {robot.orientation.str_orient}')
-        # print(f'current: {current}')
-        # print()
-        
+        if debug:
+            print('------')
+            print(f'pos: {robot.pos.x}, {robot.pos.y}')
+            print(f'orient: {robot.orientation.str_orient}')
+            print(f'current: {current}')
+            print()
+            
         # on a straight line
         if current in '─│':
             pass
@@ -214,7 +215,6 @@ def tremaux(robot: Robot) -> None:
             policko = my_map[robot.pos.y][robot.pos.x]
             ## try to pick unmarked path
             dict_policko = policko.__dict__.copy()
-
             if current == '├':  dict_policko.pop('left')
             if current == '┤':  dict_policko.pop('right')
             if current == '┬':  dict_policko.pop('up')
@@ -230,6 +230,12 @@ def tremaux(robot: Robot) -> None:
                 )
             ] += 1
             
+
+            dict_policko = policko.__dict__.copy()
+            if current == '├':  dict_policko.pop('left')
+            if current == '┤':  dict_policko.pop('right')
+            if current == '┬':  dict_policko.pop('up')
+            if current == '┴':  dict_policko.pop('down')
 
             list_mini = [key for key, value in dict_policko.items() if value == min(dict_policko.values())]
             random.shuffle(list_mini)
@@ -286,24 +292,25 @@ def tremaux(robot: Robot) -> None:
         if debug:
             print(f'Number of zeroes: {number_of_zeroes}')
             pprint_map(my_map, my_maze, robot.pos)
-            # sleep(0.1)
+            sleep(0.4)
                     
         if number_of_zeroes == 0:
             if debug:
                 print('┌──────────────────────────┐')
                 print('| All of the maze searched |')
                 print('└──────────────────────────┘')
-            print('Iterations:', itera)
-            print(itera, file=open('iterations', 'a'))
-            exit(0)
+            # print('Iterations:', itera)
+            # print(itera, file=open('iterations', 'a'))
+            return itera
+            # exit(0)
 
 
 
 
-def main():
+def main(debug=True) -> None:
     map_size = 10
     robot = Robot()
-    tremaux(robot)
+    return tremaux(robot, debug)
 
 
 

@@ -1,5 +1,12 @@
-lst = open('iterations', 'r').readlines()
-lst = [int(i.strip()) for i in lst]
+from  main import main
+from tqdm import tqdm
+
+
+lst = []
+
+
+for _ in tqdm(range(10000)):
+    lst.append(main(debug=False))
 
 print('Average:', sum(lst) / len(lst))
 print('Max:', max(lst))
