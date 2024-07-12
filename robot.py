@@ -129,6 +129,15 @@ class Robot():
         if self.orientation.str_orient == 'down':  self.pos.y += 1
         if self.orientation.str_orient == 'left':  self.pos.x -= 1
 
+
+    def turn_left(self) -> None:
+        self.orientation.left()
+
+    def turn_right(self) -> None:
+        self.orientation.right()
+    
+    def turn_around(self) -> None:
+        self.orientation.left()
        
 
 
