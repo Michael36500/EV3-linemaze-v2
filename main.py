@@ -151,6 +151,7 @@ def pprint_map(map: list, maze: list, pos) -> None:
 
 
 def tremaux(robot: Robot) -> None:
+    debug = False
     seed = random.randrange(sys.maxsize)
     random.seed(seed)
     print(f'Seed: {seed}', file=open('seed', 'w'))
@@ -266,9 +267,10 @@ def tremaux(robot: Robot) -> None:
             # print(policko.__dict__)
 
         elif current == '■':
-            print('┌─────────────────┐')
-            print('| End of the maze |')
-            print('└─────────────────┘')
+            if debug:
+                print('┌─────────────────┐')
+                print('| End of the maze |')
+                print('└─────────────────┘')
 
             # pprint_maze(my_maze)
             # pprint_map(my_map, my_maze)
@@ -281,14 +283,16 @@ def tremaux(robot: Robot) -> None:
 
     
         robot.forward() 
-        print(f'Number of zeroes: {number_of_zeroes}')
-        pprint_map(my_map, my_maze, robot.pos)
-        # sleep(0.1)
+        if debug:
+            print(f'Number of zeroes: {number_of_zeroes}')
+            pprint_map(my_map, my_maze, robot.pos)
+            # sleep(0.1)
                     
         if number_of_zeroes == 0:
-            print('┌──────────────────────────┐')
-            print('| All of the maze searched |')
-            print('└──────────────────────────┘')
+            if debug:
+                print('┌──────────────────────────┐')
+                print('| All of the maze searched |')
+                print('└──────────────────────────┘')
             print('Iterations:', itera)
             print(itera, file=open('iterations', 'a'))
             exit(0)

@@ -1,0 +1,8 @@
+lst = open('iterations', 'r').readlines()
+lst = [int(i.strip()) for i in lst]
+
+print('Average:', sum(lst) / len(lst))
+print('Max:', max(lst))
+print('Min:', min(lst))
+print('Total:', len(lst))
+print('Median:', lst[len(lst) // 2])
