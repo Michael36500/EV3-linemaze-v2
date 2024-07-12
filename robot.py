@@ -65,59 +65,59 @@ class Robot():
 
         ## check if out of bounds
         if self.orientation.str_orient == 'up' and self.pos.y == 0:      
-            raise ValueError('Out of bounds')
+            raise ValueError(f'Out of bounds: {self.pos.x}, {self.pos.y}, {self.orientation.str_orient}')
         if self.orientation.str_orient == 'right' and self.pos.x == len(self.secret_mapa[0]):   
-            raise ValueError('Out of bounds')
+            raise ValueError(f'Out of bounds: {self.pos.x}, {self.pos.y}, {self.orientation.str_orient}')
         if self.orientation.str_orient == 'down' and self.pos.y == len(self.secret_mapa):
-            raise ValueError('Out of bounds')
+            raise ValueError(f'Out of bounds: {self.pos.x}, {self.pos.y}, {self.orientation.str_orient}')
         if self.orientation.str_orient == 'left' and self.pos.x == 0:
-            raise ValueError('Out of bounds')
+            raise ValueError(f'Out of bounds: {self.pos.x}, {self.pos.y}, {self.orientation.str_orient}')
 
         ## check if wall
         current: str = self.secret_mapa[self.pos.y][self.pos.x]
         match current:
             case '╴':
                 if self.orientation != 'left':
-                    raise ValueError(f'Wall: {self.pos.x}, {self.pos.y}, {self.orientation.str_orient}')
+                    raise ValueError(f'Wall: {self.pos.x}, {self.pos.y}, {self.orientation.str_orient}. {current}')
             case '╵':
                 if self.orientation.str_orient != 'up':
-                    raise ValueError(f'Wall: {self.pos.x}, {self.pos.y}, {self.orientation.str_orient}')
+                    raise ValueError(f'Wall: {self.pos.x}, {self.pos.y}, {self.orientation.str_orient}. {current}')
             case '╶':
                 if self.orientation.str_orient != 'right':
-                    raise ValueError(f'Wall: {self.pos.x}, {self.pos.y}, {self.orientation.str_orient}')
+                    raise ValueError(f'Wall: {self.pos.x}, {self.pos.y}, {self.orientation.str_orient}. {current}')
             case '╷':
                 if self.orientation.str_orient != 'down':
-                    raise ValueError(f'Wall: {self.pos.x}, {self.pos.y}, {self.orientation.str_orient}')
+                    raise ValueError(f'Wall: {self.pos.x}, {self.pos.y}, {self.orientation.str_orient}. {current}')
             case '─':   
                 if self.orientation.str_orient == 'up' or self.orientation.str_orient == 'down':      
-                    raise ValueError(f'Wall: {self.pos.x}, {self.pos.y}, {self.orientation.str_orient}')
+                    raise ValueError(f'Wall: {self.pos.x}, {self.pos.y}, {self.orientation.str_orient}. {current}')
             case '│':
                 if self.orientation.str_orient == 'right' or self.orientation.str_orient == 'left':   
-                    raise ValueError(f'Wall: {self.pos.x}, {self.pos.y}, {self.orientation.str_orient}')
+                    raise ValueError(f'Wall: {self.pos.x}, {self.pos.y}, {self.orientation.str_orient}. {current}')
             case '┌':
                 if self.orientation.str_orient == 'left' or self.orientation.str_orient == 'up':      
-                    raise ValueError(f'Wall: {self.pos.x}, {self.pos.y}, {self.orientation.str_orient}')
+                    raise ValueError(f'Wall: {self.pos.x}, {self.pos.y}, {self.orientation.str_orient}. {current}')
             case '┐':
                 if self.orientation.str_orient == 'right' or self.orientation.str_orient == 'up':     
-                    raise ValueError(f'Wall: {self.pos.x}, {self.pos.y}, {self.orientation.str_orient}')
+                    raise ValueError(f'Wall: {self.pos.x}, {self.pos.y}, {self.orientation.str_orient}. {current}')
             case '└':
                 if self.orientation.str_orient == 'left' or self.orientation.str_orient == 'down':    
-                    raise ValueError(f'Wall: {self.pos.x}, {self.pos.y}, {self.orientation.str_orient}')
+                    raise ValueError(f'Wall: {self.pos.x}, {self.pos.y}, {self.orientation.str_orient}. {current}')
             case '┘':
                 if self.orientation.str_orient == 'right' or self.orientation.str_orient == 'down':   
-                    raise ValueError(f'Wall: {self.pos.x}, {self.pos.y}, {self.orientation.str_orient}')
+                    raise ValueError(f'Wall: {self.pos.x}, {self.pos.y}, {self.orientation.str_orient}. {current}')
             case '├':
-                if self.orientation.str_orient == 'right':                                            
-                    raise ValueError(f'Wall: {self.pos.x}, {self.pos.y}, {self.orientation.str_orient}')
+                if self.orientation.str_orient == 'left':                                            
+                    raise ValueError(f'Wall: {self.pos.x}, {self.pos.y}, {self.orientation.str_orient}. {current}')
             case '┤':
-                if self.orientation.str_orient == 'left':                                             
-                    raise ValueError(f'Wall: {self.pos.x}, {self.pos.y}, {self.orientation.str_orient}')
+                if self.orientation.str_orient == 'right':                                             
+                    raise ValueError(f'Wall: {self.pos.x}, {self.pos.y}, {self.orientation.str_orient}. {current}')
             case '┬':  
-                if self.orientation.str_orient == 'down':                                             
-                    raise ValueError(f'Wall: {self.pos.x}, {self.pos.y}, {self.orientation.str_orient}')
+                if self.orientation.str_orient == 'up':                                             
+                    raise ValueError(f'Wall: {self.pos.x}, {self.pos.y}, {self.orientation.str_orient}. {current}')
             case '┴':
-                if self.orientation.str_orient == 'up':                                               
-                    raise ValueError(f'Wall: {self.pos.x}, {self.pos.y}, {self.orientation.str_orient}')
+                if self.orientation.str_orient == 'down':                                               
+                    raise ValueError(f'Wall: {self.pos.x}, {self.pos.y}, {self.orientation.str_orient}. {current}')
             case '┼':
                 pass
             case _:
@@ -138,6 +138,17 @@ class Robot():
     
     def turn_around(self) -> None:
         self.orientation.left()
+        self.orientation.left()
+    
+    def turn_absolute(self, orient: str) -> None:
+        start = self.orientation.int_orient
+        end = Orientation.str2num('self', orient)
+
+        if start == end: return
+        if (start - end) % 4 == 1: self.turn_right()
+        if (start - end) % 4 == 3: self.turn_left()
+        if (start - end) % 4 == 2: self.turn_around()
+        
        
 
 
@@ -145,5 +156,6 @@ class Robot():
         self.secret_mapa = self.load_mapa()
         self.pos = Position(0, 0)
         self.orientation = Orientation('right')
+
 
         

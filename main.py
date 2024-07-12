@@ -1,14 +1,27 @@
-from functools import wraps
 from robot import Robot
+from dataclasses import dataclass
 
 
+@dataclass
+class Policko:
+    up:     int = 0
+    right:  int = 0
+    down:   int = 0
+    left:   int = 0
 
 
 def tremaux(robot: Robot) -> None:
-    my_map = [['0' for _ in range(10)] for _ in range(10)]
+    my_map = [[Policko() for _ in range(10)] for _ in range(10)]
+    robot.forward()
     
     while True:
         current = robot.where_am_i()
+
+        print()
+        print(f'pos: {robot.pos.x}, {robot.pos.y}')
+        print(f'orient: {robot.orientation.str_orient}')
+        print(f'current: {current}')
+        print()
         
         # on a straight line
         if current in '─│':
@@ -40,8 +53,39 @@ def tremaux(robot: Robot) -> None:
             robot.turn_around()
             robot.forward()
 
-        # if current in '├┤┬┴':
-        #     # apply logic
+        if current in '├┤┬┴┼':
+            # apply logic
+            # firsly, mark the current field
+            my_map[robot.pos.y][robot.pos.x].__dict__[robot.orientation.str_orient] += 1
+
+            # choose the direction
+            policko = my_map[robot.pos.y][robot.pos.x]
+            ## try to pick unmarked path
+            marked_0 = []
+            marked_1 = []
+            for key, value in policko.__dict__.items():
+                if value == 0: marked_0.append(key)
+                if value == 1: marked_1.append(key)
+
+            if marked_0 != []:
+                print()
+                robot.turn_absolute(marked_0[0])
+                robot.forward()
+
+            if marked_0 == []:
+                if marked_1 != []:
+                    robot.turn_absolute(marked_1[0])
+                    robot.forward()
+                
+                if marked_1 == []:
+                    robot.turn_around()
+            
+
+
+            # lastly, mark the exit
+            my_map[robot.pos.y][robot.pos.x].__dict__[robot.orientation.str_orient] += 1
+            continue
+            
 
                  
 
