@@ -202,31 +202,33 @@ def tremaux(robot: Robot) -> None:
         elif current in '╴╵╶╷':
             robot.turn_around()
 
-        elif current in '├┤┬┴┼':
+        elif current in '├ ┤ ┬ ┴ ┼':
             # apply logic
             # firsly, mark the current field
-            my_map[robot.pos.y][robot.pos.x].__dict__[
-                robot.orientation.num2str(
-                    (robot.orientation.int_orient + 2) %4
-                )
-            ] += 1
+            if my_map[robot.pos.y][robot.pos.x].__dict__[robot.orientation.num2str((robot.orientation.int_orient+2)%4)] == 0:
+                number_of_zeroes -= 1
+
 
             # choose the direction
             policko = my_map[robot.pos.y][robot.pos.x]
             ## try to pick unmarked path
             dict_policko = policko.__dict__.copy()
 
-
-
-
-            
             if current == '├':  dict_policko.pop('left')
             if current == '┤':  dict_policko.pop('right')
             if current == '┬':  dict_policko.pop('up')
             if current == '┴':  dict_policko.pop('down')
 
-            # if sum(dict_policko.values()) == 0:
-            #     number_of_zeroes += len(dict_policko)
+            if sum(dict_policko.values()) == 0:
+                number_of_zeroes += len(dict_policko)
+
+
+            my_map[robot.pos.y][robot.pos.x].__dict__[
+                robot.orientation.num2str(
+                    (robot.orientation.int_orient + 2) %4
+                )
+            ] += 1
+            
 
             list_mini = [key for key, value in dict_policko.items() if value == min(dict_policko.values())]
             random.shuffle(list_mini)
@@ -257,6 +259,8 @@ def tremaux(robot: Robot) -> None:
 
             # print(my_map[robot.pos.y][robot.pos.x].__dict__)
             # print(f'heading: {robot.orientation.str_orient}')
+            if my_map[robot.pos.y][robot.pos.x].__dict__[robot.orientation.str_orient] == 0:
+                number_of_zeroes -= 1
             my_map[robot.pos.y][robot.pos.x].__dict__[robot.orientation.str_orient] += 1
 
             # print(policko.__dict__)
@@ -275,19 +279,21 @@ def tremaux(robot: Robot) -> None:
 
             # sleep(1)
 
+    
+        robot.forward() 
+        print(f'Number of zeroes: {number_of_zeroes}')
+        pprint_map(my_map, my_maze, robot.pos)
+        # sleep(0.1)
+                    
         if number_of_zeroes == 0:
             print('┌──────────────────────────┐')
             print('| All of the maze searched |')
             print('└──────────────────────────┘')
             print('Iterations:', itera)
+            print(itera, file=open('iterations', 'a'))
             exit(0)
 
-    
-        robot.forward() 
-        # pprint_map(my_map, my_maze, robot.pos)
-        # sleep(0.2)
-                    
-    
+
 
 
 def main():

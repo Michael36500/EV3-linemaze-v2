@@ -126,7 +126,8 @@ class Robot():
                     self.found_end = True
                     return 'end'
                 else: 
-                    print('End already found')
+                    # print('End already found')
+                    pass
             case _:
                 raise ValueError(f'Invalid character: {current} at {self.pos.x}, {self.pos.y}')                
 
