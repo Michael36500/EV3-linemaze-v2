@@ -11,57 +11,6 @@ class Position():
         self.x = x
         self.y = y
 
-    def forward(self, orient: str) -> None:
-        # check if all alrigh
-        ## check if orient is valid
-        if orient not in ['up', 'right', 'down', 'left']: 
-            raise ValueError('Invalid orientation')
-
-        ## check if out of bounds
-        if orient == 'up' and self.y == 0:      
-            raise ValueError('Out of bounds')
-        if orient == 'right' and self.x == len(self.mapa[0]):   
-            raise ValueError('Out of bounds')
-        if orient == 'down' and self.y == len(self.mapa):
-            raise ValueError('Out of bounds')
-        if orient == 'left' and self.x == 0:
-            raise ValueError('Out of bounds')
-
-        ## check if wall
-        current: str = self.mapa[self.y][self.x]
-        match current:
-            case '─':   
-                if orient == 'up' or orient == 'down':      raise ValueError('Wall')
-            case '│':
-                if orient == 'right' or orient == 'left':   raise ValueError('Wall')
-            case '┌':
-                if orient == 'left' or orient == 'up':      raise ValueError('Wall')
-            case '┐':
-                if orient == 'right' or orient == 'up':     raise ValueError('Wall')
-            case '└':
-                if orient == 'left' or orient == 'down':    raise ValueError('Wall')
-            case '┘':
-                if orient == 'right' or orient == 'down':   raise ValueError('Wall')
-            case '├':
-                if orient == 'right':                       raise ValueError('Wall')
-            case '┤':
-                if orient == 'left':                        raise ValueError('Wall')
-            case '┬':
-                if orient == 'down':                        raise ValueError('Wall')
-            case '┴':
-                if orient == 'up':                          raise ValueError('Wall')
-            case '┼':
-                pass
-            case _:
-                                                            raise ValueError('Invalid character')                
-
-
-        if orient == 'up':    self.y -= 1
-        if orient == 'right': self.x += 1
-        if orient == 'down':  self.y += 1
-        if orient == 'left':  self.x -= 1
-
-
 class Orientation():
     def num2str(self, num: int) -> str:
         if num == 0: return 'up'
@@ -107,6 +56,80 @@ class Robot():
 
     def where_am_i(self) -> str:
         return self.secret_mapa[self.pos.y][self.pos.x]
+
+    def forward(self) -> None:
+        # check if all alrigh
+        ## check if orient is valid
+        if self.orientation.str_orient not in ['up', 'right', 'down', 'left']: 
+            raise ValueError(f'Invalid orientation: {self.orientation.str_orient}')
+
+        ## check if out of bounds
+        if self.orientation.str_orient == 'up' and self.pos.y == 0:      
+            raise ValueError('Out of bounds')
+        if self.orientation.str_orient == 'right' and self.pos.x == len(self.secret_mapa[0]):   
+            raise ValueError('Out of bounds')
+        if self.orientation.str_orient == 'down' and self.pos.y == len(self.secret_mapa):
+            raise ValueError('Out of bounds')
+        if self.orientation.str_orient == 'left' and self.pos.x == 0:
+            raise ValueError('Out of bounds')
+
+        ## check if wall
+        current: str = self.secret_mapa[self.pos.y][self.pos.x]
+        match current:
+            case '╴':
+                if self.orientation != 'left':
+                    raise ValueError(f'Wall: {self.pos.x}, {self.pos.y}, {self.orientation.str_orient}')
+            case '╵':
+                if self.orientation.str_orient != 'up':
+                    raise ValueError(f'Wall: {self.pos.x}, {self.pos.y}, {self.orientation.str_orient}')
+            case '╶':
+                if self.orientation.str_orient != 'right':
+                    raise ValueError(f'Wall: {self.pos.x}, {self.pos.y}, {self.orientation.str_orient}')
+            case '╷':
+                if self.orientation.str_orient != 'down':
+                    raise ValueError(f'Wall: {self.pos.x}, {self.pos.y}, {self.orientation.str_orient}')
+            case '─':   
+                if self.orientation.str_orient == 'up' or self.orientation.str_orient == 'down':      
+                    raise ValueError(f'Wall: {self.pos.x}, {self.pos.y}, {self.orientation.str_orient}')
+            case '│':
+                if self.orientation.str_orient == 'right' or self.orientation.str_orient == 'left':   
+                    raise ValueError(f'Wall: {self.pos.x}, {self.pos.y}, {self.orientation.str_orient}')
+            case '┌':
+                if self.orientation.str_orient == 'left' or self.orientation.str_orient == 'up':      
+                    raise ValueError(f'Wall: {self.pos.x}, {self.pos.y}, {self.orientation.str_orient}')
+            case '┐':
+                if self.orientation.str_orient == 'right' or self.orientation.str_orient == 'up':     
+                    raise ValueError(f'Wall: {self.pos.x}, {self.pos.y}, {self.orientation.str_orient}')
+            case '└':
+                if self.orientation.str_orient == 'left' or self.orientation.str_orient == 'down':    
+                    raise ValueError(f'Wall: {self.pos.x}, {self.pos.y}, {self.orientation.str_orient}')
+            case '┘':
+                if self.orientation.str_orient == 'right' or self.orientation.str_orient == 'down':   
+                    raise ValueError(f'Wall: {self.pos.x}, {self.pos.y}, {self.orientation.str_orient}')
+            case '├':
+                if self.orientation.str_orient == 'right':                                            
+                    raise ValueError(f'Wall: {self.pos.x}, {self.pos.y}, {self.orientation.str_orient}')
+            case '┤':
+                if self.orientation.str_orient == 'left':                                             
+                    raise ValueError(f'Wall: {self.pos.x}, {self.pos.y}, {self.orientation.str_orient}')
+            case '┬':  
+                if self.orientation.str_orient == 'down':                                             
+                    raise ValueError(f'Wall: {self.pos.x}, {self.pos.y}, {self.orientation.str_orient}')
+            case '┴':
+                if self.orientation.str_orient == 'up':                                               
+                    raise ValueError(f'Wall: {self.pos.x}, {self.pos.y}, {self.orientation.str_orient}')
+            case '┼':
+                pass
+            case _:
+                raise ValueError(f'Invalid character: {current} at {self.pos.x}, {self.pos.y}')                
+
+
+        if self.orientation.str_orient == 'up':    self.pos.y -= 1
+        if self.orientation.str_orient == 'right': self.pos.x += 1
+        if self.orientation.str_orient == 'down':  self.pos.y += 1
+        if self.orientation.str_orient == 'left':  self.pos.x -= 1
+
+       
 
 
     def __init__(self) -> None:
