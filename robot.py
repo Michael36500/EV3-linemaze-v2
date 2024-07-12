@@ -77,7 +77,7 @@ class Robot():
         current: str = self.secret_mapa[self.pos.y][self.pos.x]
         match current:
             case '╴':
-                print(self.orientation.str_orient != 'left')
+                # print(self.orientation.str_orient != 'left')
                 if self.orientation.str_orient != 'left':
                     raise ValueError(f'Wall: {self.pos.x}, {self.pos.y}, {self.orientation.str_orient}. {current}')
             case '╵':
@@ -150,7 +150,7 @@ class Robot():
     def turn_absolute(self, orient: str) -> None:
         start = self.orientation.int_orient
         end = Orientation.str2num('self', orient)
-        print(f'start: {start}, end: {end}')
+        # print(f'start: {start}, end: {end}')
 
         if start == end: return
         if (start - end) % 4 == 1: self.turn_left()
