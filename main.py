@@ -124,7 +124,7 @@ def pprint_map(map: list, maze: list, pos) -> None:
             .replace(']', '')\
             .replace('\'', '')\
             .replace(',', '')\
-            == '': continue
+            == '' and y > 6: continue
 
         top: str = ''
         mid: str = ''
@@ -161,10 +161,11 @@ def tremaux(robot: Robot) -> None:
     robot.forward()
 
     itera = 0
-    
+    number_of_zeroes = 0
+ 
     while True:
         itera += 1
-        print(f'Itera: {itera}')
+        # print(f'Itera: {itera}')
         current = robot.where_am_i()
         my_maze[robot.pos.y][robot.pos.x] = current
         # print('------')
@@ -213,9 +214,10 @@ def tremaux(robot: Robot) -> None:
             # choose the direction
             policko = my_map[robot.pos.y][robot.pos.x]
             ## try to pick unmarked path
-            marked_0 = []
-            marked_1 = []
             dict_policko = policko.__dict__.copy()
+
+
+
 
             
             if current == '├':  dict_policko.pop('left')
@@ -223,6 +225,8 @@ def tremaux(robot: Robot) -> None:
             if current == '┬':  dict_policko.pop('up')
             if current == '┴':  dict_policko.pop('down')
 
+            # if sum(dict_policko.values()) == 0:
+            #     number_of_zeroes += len(dict_policko)
 
             list_mini = [key for key, value in dict_policko.items() if value == min(dict_policko.values())]
             random.shuffle(list_mini)
@@ -270,6 +274,13 @@ def tremaux(robot: Robot) -> None:
 
 
             # sleep(1)
+
+        if number_of_zeroes == 0:
+            print('┌──────────────────────────┐')
+            print('| All of the maze searched |')
+            print('└──────────────────────────┘')
+            print('Iterations:', itera)
+            exit(0)
 
     
         robot.forward() 
