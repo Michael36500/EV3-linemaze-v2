@@ -43,7 +43,7 @@ class Orientation():
 class Robot():
     def load_mapa(_) -> List[List[str]]:
         mapa = []
-        with open('maze') as f:
+        with open('maze2') as f:
             for line in f:
                 lin = []
                 for char in line:
@@ -64,20 +64,21 @@ class Robot():
             raise ValueError(f'Invalid orientation: {self.orientation.str_orient}')
 
         ## check if out of bounds
-        if self.orientation.str_orient == 'up' and self.pos.y == 0:      
+        if self.orientation.str_orient == 'up' and self.pos.y-1 < -1:      
             raise ValueError(f'Out of bounds: {self.pos.x}, {self.pos.y}, {self.orientation.str_orient}')
         if self.orientation.str_orient == 'right' and self.pos.x == len(self.secret_mapa[0]):   
             raise ValueError(f'Out of bounds: {self.pos.x}, {self.pos.y}, {self.orientation.str_orient}')
         if self.orientation.str_orient == 'down' and self.pos.y == len(self.secret_mapa):
             raise ValueError(f'Out of bounds: {self.pos.x}, {self.pos.y}, {self.orientation.str_orient}')
-        if self.orientation.str_orient == 'left' and self.pos.x == 0:
+        if self.orientation.str_orient == 'left' and self.pos.x-1 < -1:
             raise ValueError(f'Out of bounds: {self.pos.x}, {self.pos.y}, {self.orientation.str_orient}')
 
         ## check if wall
         current: str = self.secret_mapa[self.pos.y][self.pos.x]
         match current:
             case '╴':
-                if self.orientation != 'left':
+                print(self.orientation.str_orient != 'left')
+                if self.orientation.str_orient != 'left':
                     raise ValueError(f'Wall: {self.pos.x}, {self.pos.y}, {self.orientation.str_orient}. {current}')
             case '╵':
                 if self.orientation.str_orient != 'up':
@@ -120,6 +121,12 @@ class Robot():
                     raise ValueError(f'Wall: {self.pos.x}, {self.pos.y}, {self.orientation.str_orient}. {current}')
             case '┼':
                 pass
+            case '■':
+                if not self.found_end:
+                    self.found_end = True
+                    return 'end'
+                else: 
+                    print('End already found')
             case _:
                 raise ValueError(f'Invalid character: {current} at {self.pos.x}, {self.pos.y}')                
 
@@ -137,16 +144,17 @@ class Robot():
         self.orientation.right()
     
     def turn_around(self) -> None:
-        self.orientation.left()
-        self.orientation.left()
+        self.turn_left()
+        self.turn_left()
     
     def turn_absolute(self, orient: str) -> None:
         start = self.orientation.int_orient
         end = Orientation.str2num('self', orient)
+        print(f'start: {start}, end: {end}')
 
         if start == end: return
-        if (start - end) % 4 == 1: self.turn_right()
-        if (start - end) % 4 == 3: self.turn_left()
+        if (start - end) % 4 == 1: self.turn_left()
+        if (start - end) % 4 == 3: self.turn_right()
         if (start - end) % 4 == 2: self.turn_around()
         
        
@@ -154,6 +162,7 @@ class Robot():
 
     def __init__(self) -> None:
         self.secret_mapa = self.load_mapa()
+        self.found_end = False
         self.pos = Position(0, 0)
         self.orientation = Orientation('right')
 
