@@ -147,7 +147,90 @@ def pprint_map(map: list, maze: list, pos) -> None:
         print(mid)
         print(bot)
 
+def is_there_zero(policko: Policko) -> bool:
+    if policko.up == 0: return True
+    if policko.right == 0: return True
+    if policko.down == 0: return True
+    if policko.left == 0: return True
+    return False
 
+def lenght_to_zero(key: str, pos, my_map) -> int:
+    x = pos.x
+    y = pos.y
+    match key:
+        case 'up':    y -= 1
+        case 'right': x += 1
+        case 'down':  y += 1
+        case 'left':  x -= 1
+
+    policko = my_map[y][x]
+    if is_there_zero(policko): return 1
+    match policko:
+        case '─':
+            return min(
+                lenght_to_zero('left', pos, my_map) + 1,
+                lenght_to_zero('right', pos, my_map + 1)
+            )
+        case '│':
+            return min(
+                lenght_to_zero('up', pos, my_map) + 1,
+                lenght_to_zero('down', pos, my_map + 1)
+            )
+        case '┌':
+            return min(
+                lenght_to_zero('right', pos, my_map) + 1,
+                lenght_to_zero('down', pos, my_map + 1)
+            )
+        case '┐':
+            return min(
+                lenght_to_zero('left', pos, my_map) + 1,
+                lenght_to_zero('down', pos, my_map + 1)
+            )
+        case '┘':
+            return min(
+                lenght_to_zero('left', pos, my_map) + 1,
+                lenght_to_zero('up', pos, my_map + 1)
+            )
+        case '├':
+            return min(
+                lenght_to_zero('up', pos, my_map) + 1,
+                lenght_to_zero('right', pos, my_map) + 1,
+                lenght_to_zero('down', pos, my_map + 1)
+            )
+        case '└':
+            return min(
+                lenght_to_zero('up', pos, my_map) + 1,
+                lenght_to_zero('right', pos, my_map) + 1,
+            )
+        case '┤':
+            return min(
+                lenght_to_zero('up', pos, my_map) + 1,
+                lenght_to_zero('left', pos, my_map) + 1,
+                lenght_to_zero('down', pos, my_map + 1)
+            )
+        case '┬':
+            return min(
+                lenght_to_zero('left', pos, my_map) + 1,
+                lenght_to_zero('right', pos, my_map) + 1,
+                lenght_to_zero('down', pos, my_map + 1)
+            )
+        case '┴':
+            return min(
+                lenght_to_zero('left', pos, my_map) + 1,
+                lenght_to_zero('right', pos, my_map) + 1,
+                lenght_to_zero('up', pos, my_map + 1)
+            )
+        case '┼':
+            return min(
+                lenght_to_zero('left', pos, my_map) + 1,
+                lenght_to_zero('right', pos, my_map) + 1,
+                lenght_to_zero('up', pos, my_map) + 1,
+                lenght_to_zero('down', pos, my_map + 1)
+            )
+        case _:
+            return 10000
+    
+    
 
 
 def tremaux(robot: Robot, debug=True) -> None:
@@ -239,6 +322,13 @@ def tremaux(robot: Robot, debug=True) -> None:
 
             list_mini = [key for key, value in dict_policko.items() if value == min(dict_policko.values())]
             random.shuffle(list_mini)
+            print(list_mini)
+            # dict_length = {}
+            # for key in list_mini:
+            #     dict_length[key] = lenght_to_zero(key, robot.pos, my_map)
+            # print(dict_length)
+            # list_mini = [key for key, value in zip(list_mini, dict_length.items) if value == min(list_lenght)]
+
             robot.turn_absolute(list_mini[0]) 
 
             # for key, value in dict_policko.items():
@@ -292,14 +382,14 @@ def tremaux(robot: Robot, debug=True) -> None:
         if debug:
             print(f'Number of zeroes: {number_of_zeroes}')
             pprint_map(my_map, my_maze, robot.pos)
-            sleep(0.4)
+            sleep(0.2)
                     
         if number_of_zeroes == 0:
             if debug:
                 print('┌──────────────────────────┐')
                 print('| All of the maze searched |')
                 print('└──────────────────────────┘')
-            # print('Iterations:', itera)
+                print('Iterations:', itera)
             # print(itera, file=open('iterations', 'a'))
             return itera
             # exit(0)
