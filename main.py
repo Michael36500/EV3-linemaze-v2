@@ -1,15 +1,24 @@
-from simuation import Robot
-from dataclasses import dataclass
+#!/usr/bin/env pybricks-micropython
+
+from robot import Robot
+# from dataclasses import dataclass
 from time import sleep
 import random, sys
 
 
-@dataclass
-class Policko:
-    up:     int = 0
-    right:  int = 0
-    down:   int = 0
-    left:   int = 0
+# @dataclass
+# class Policko:
+#     up:     int = 0
+#     right:  int = 0
+#     down:   int = 0
+#     left:   int = 0
+
+class Policko():
+    def __init__(self) -> None:
+        self.up = 0
+        self.right = 0
+        self.down = 0
+        self.left = 0
 
 
 def pprint_maze(mapa: list) -> None:
@@ -26,25 +35,51 @@ def dot_if_zero(num: int) -> str:
     if num == 0 or num == '.': return ' '
     return str(num)
 
+bolden_characters = {
+    '─': '━',
+    '│': '┃',
+    '┌': '┏',
+    '┐': '┓',
+    '┘': '┛',
+    '├': '┣',
+    '└': '┗',
+    '┤': '┫',
+    '┬': '┳',
+    '┴': '┻',
+    '┼': '╋',
+    '■': '█',
+    '╴': '╸',
+    '╵': '╹',
+    '╶': '╺',
+    '╷': '╻',
+    ' ': ' '
+}
+
+
 def bolden_char(char: str) -> str:
-    match char:
-        case '─':       return '━'
-        case '│':       return '┃'
-        case '┌':       return '┏'
-        case '┐':       return '┓'
-        case '┘':       return '┛'
-        case '├':       return '┣'
-        case '└':       return '┗'
-        case '┤':       return '┫'
-        case '┬':       return '┳'
-        case '┴':       return '┻'
-        case '┼':       return '╋'
-        case '■':       return '█'
-        case '╴':       return '╸'
-        case '╵':       return '╹'
-        case '╶':       return '╺'
-        case '╷':       return '╻'
-        case ' ':       return ' '
+    return bolden_characters[char]
+
+
+maze_chars_around = {
+    '─': {'up': ' ', 'down': ' ', 'left': '─', 'right': '─'},
+    '│': {'up': '│', 'down': '│', 'left': ' ', 'right': ' '},
+    '┌': {'down': '│', 'right': '─', 'default': ' '},
+    '┐': {'down': '│', 'left': '─', 'default': ' '},
+    '└': {'up': '│', 'right': '─', 'default': ' '},
+    '┘': {'up': '│', 'left': '─', 'default': ' '},
+    '├': {'up': '│', 'down': '│', 'right': '─', 'default': ' '},
+    '┤': {'up': '│', 'down': '│', 'left': '─', 'default': ' '},
+    '┬': {'left': '─', 'right': '─', 'down': '│', 'default': ' '},
+    '┴': {'left': '─', 'right': '─', 'up': '│', 'default': ' '},
+    '┼': {'up': '│', 'down': '│', 'left': '─', 'right': '─', 'default': ' '},
+    '■': {'default': ' '},
+    '╴': {'left': '─', 'default': ' '},
+    '╵': {'up': '│', 'default': ' '},
+    '╶': {'right': '─', 'default': ' '},
+    '╷': {'down': '│', 'default': ' '},
+    'default': {'default': ' '}
+}
+
 
 def charing(dot: str, maze_char: str, direction: str) -> str:
     try:
@@ -52,66 +87,8 @@ def charing(dot: str, maze_char: str, direction: str) -> str:
         if dot > 10: return 'X'
         else: return str(dot)
     except:
-        match maze_char:
-            case '─':
-                if direction == 'up' or direction == 'down': return ' '
-                elif direction == 'left' or direction == 'right': return '─'
-            case '│':
-                if direction == 'up' or direction == 'down': return '│'
-                elif direction == 'left' or direction == 'right': return ' '
-            case '┌':
-                if direction == 'down': return '│'
-                elif direction == 'right': return '─'
-                else: return ' '
-            case '┐':
-                if direction == 'down': return '│'
-                elif direction == 'left': return '─'
-                else: return ' '
-            case '└':
-                if direction == 'up': return '│'
-                elif direction == 'right': return '─'
-                else: return ' '
-            case '┘':
-                if direction == 'up': return '│'
-                elif direction == 'left': return '─'
-                else: return ' '
-            case '├':
-                if direction == 'up' or direction == 'down': return '│'
-                elif direction == 'right': return '─'
-                else: return ' '
-            case '┤':
-                if direction == 'up' or direction == 'down': return '│'
-                elif direction == 'left': return '─'
-                else: return ' '
-            case '┬':
-                if direction == 'left' or direction == 'right': return '─'
-                elif direction == 'down': return '│'
-                else: return ' '
-            case '┴':
-                if direction == 'left' or direction == 'right': return '─'
-                elif direction == 'up': return '│'
-                else: return ' '
-            case '┼':
-                if direction == 'up' or direction == 'down': return '│'
-                elif direction == 'left' or direction == 'right': return '─'
-                else: return ' '
-            case '■':
-                return ' '
-            case '╴':
-                if direction == 'left': return '─'
-                else: return ' '
-            case '╵':
-                if direction == 'up': return '│'
-                else: return ' '
-            case '╶':
-                if direction == 'right': return '─'
-                else: return ' '
-            case '╷':
-                if direction == 'down': return '│'
-                else: return ' '
-            case _:
-                return ' '
-    
+        return maze_chars_around[maze_char][direction]
+   
 
 def pprint_map(map: list, maze: list, pos) -> None:
     y = -1
@@ -126,22 +103,22 @@ def pprint_map(map: list, maze: list, pos) -> None:
             .replace(',', '')\
             == '' and y > 6: continue
 
-        top: str = ''
-        mid: str = ''
-        bot: str = ''
+        top = ''
+        mid = ''
+        bot = ''
 
         x = -1 
         for policko, maze_char in zip(line_map, line_maze): 
             x += 1 
             if pos.x == x and pos.y == y:
-                top += f'   {charing(dot_if_zero(policko.up), maze_char, "up")}   '
-                mid += f' {charing(dot_if_zero(policko.left), maze_char, "left")} \033[1m\033[91mX\033[0m {charing(dot_if_zero(policko.right), maze_char, "right")} '
-                bot += f'   {charing(dot_if_zero(policko.down), maze_char, "down")}   '
+                top += '   ' + charing(dot_if_zero(policko.up), maze_char, "up") + '   '
+                mid += ' ' + charing(dot_if_zero(policko.left), maze_char, "left") + ' \033[1m\033[91mX\033[0m ' + charing(dot_if_zero(policko.right), maze_char, "right") + ' '
+                bot += '   ' + charing(dot_if_zero(policko.down), maze_char, "down") + '   '
 
             else:
-                top += f'   {charing(dot_if_zero(policko.up), maze_char, "up")}   '
-                mid += f' {charing(dot_if_zero(policko.left), maze_char, "left")} {bolden_char(dot_if_zero(maze_char))} {charing(dot_if_zero(policko.right), maze_char, "right")} '
-                bot += f'   {charing(dot_if_zero(policko.down), maze_char, "down")}   '
+                top += '   ' + charing(dot_if_zero(policko.up), maze_char, "up") + '   '
+                mid += ' ' + charing(dot_if_zero(policko.left), maze_char, "left") + ' ' + bolden_char(dot_if_zero(maze_char)) + ' ' + charing(dot_if_zero(policko.right), maze_char, "right") + ' '
+                bot += '   ' + charing(dot_if_zero(policko.down), maze_char, "down") + '   '
 
         print(top)
         print(mid)
@@ -157,87 +134,87 @@ def is_there_zero(policko: Policko) -> bool:
 def lenght_to_zero(key: str, pos, my_map) -> int:
     x = pos.x
     y = pos.y
-    match key:
-        case 'up':    y -= 1
-        case 'right': x += 1
-        case 'down':  y += 1
-        case 'left':  x -= 1
+    if key == 'up':
+        y -= 1
+    elif key == 'right':
+        x += 1
+    elif key == 'down':
+        y += 1
+    elif key == 'left':
+        x -= 1
 
     policko = my_map[y][x]
     if is_there_zero(policko): return 1
-    match policko:
-        case '─':
-            return min(
-                lenght_to_zero('left', pos, my_map) + 1,
-                lenght_to_zero('right', pos, my_map + 1)
-            )
-        case '│':
-            return min(
-                lenght_to_zero('up', pos, my_map) + 1,
-                lenght_to_zero('down', pos, my_map + 1)
-            )
-        case '┌':
-            return min(
-                lenght_to_zero('right', pos, my_map) + 1,
-                lenght_to_zero('down', pos, my_map + 1)
-            )
-        case '┐':
-            return min(
-                lenght_to_zero('left', pos, my_map) + 1,
-                lenght_to_zero('down', pos, my_map + 1)
-            )
-        case '┘':
-            return min(
-                lenght_to_zero('left', pos, my_map) + 1,
-                lenght_to_zero('up', pos, my_map + 1)
-            )
-        case '├':
-            return min(
-                lenght_to_zero('up', pos, my_map) + 1,
-                lenght_to_zero('right', pos, my_map) + 1,
-                lenght_to_zero('down', pos, my_map + 1)
-            )
-        case '└':
-            return min(
-                lenght_to_zero('up', pos, my_map) + 1,
-                lenght_to_zero('right', pos, my_map) + 1,
-            )
-        case '┤':
-            return min(
-                lenght_to_zero('up', pos, my_map) + 1,
-                lenght_to_zero('left', pos, my_map) + 1,
-                lenght_to_zero('down', pos, my_map + 1)
-            )
-        case '┬':
-            return min(
-                lenght_to_zero('left', pos, my_map) + 1,
-                lenght_to_zero('right', pos, my_map) + 1,
-                lenght_to_zero('down', pos, my_map + 1)
-            )
-        case '┴':
-            return min(
-                lenght_to_zero('left', pos, my_map) + 1,
-                lenght_to_zero('right', pos, my_map) + 1,
-                lenght_to_zero('up', pos, my_map + 1)
-            )
-        case '┼':
-            return min(
-                lenght_to_zero('left', pos, my_map) + 1,
-                lenght_to_zero('right', pos, my_map) + 1,
-                lenght_to_zero('up', pos, my_map) + 1,
-                lenght_to_zero('down', pos, my_map + 1)
-            )
-        case _:
-            return 10000
-    
-    
+    if policko == '─':
+        return min(
+            lenght_to_zero('left', pos, my_map) + 1,
+            lenght_to_zero('right', pos, my_map + 1)
+        )
+    elif policko == '│':
+        return min(
+            lenght_to_zero('up', pos, my_map) + 1,
+            lenght_to_zero('down', pos, my_map + 1)
+        )
+    elif policko == '┌':
+        return min(
+            lenght_to_zero('right', pos, my_map) + 1,
+            lenght_to_zero('down', pos, my_map + 1)
+        )
+    elif policko == '┐':
+        return min(
+            lenght_to_zero('left', pos, my_map) + 1,
+            lenght_to_zero('down', pos, my_map + 1)
+        )
+    elif policko == '┘':
+        return min(
+            lenght_to_zero('left', pos, my_map) + 1,
+            lenght_to_zero('up', pos, my_map + 1)
+        )
+    elif policko == '├':
+        return min(
+            lenght_to_zero('up', pos, my_map) + 1,
+            lenght_to_zero('right', pos, my_map) + 1,
+            lenght_to_zero('down', pos, my_map + 1)
+        )
+    elif policko == '└':
+        return min(
+            lenght_to_zero('up', pos, my_map) + 1,
+            lenght_to_zero('right', pos, my_map) + 1,
+        )
+    elif policko == '┤':
+        return min(
+            lenght_to_zero('up', pos, my_map) + 1,
+            lenght_to_zero('left', pos, my_map) + 1,
+            lenght_to_zero('down', pos, my_map + 1)
+        )
+    elif policko == '┬':
+        return min(
+            lenght_to_zero('left', pos, my_map) + 1,
+            lenght_to_zero('right', pos, my_map) + 1,
+            lenght_to_zero('down', pos, my_map + 1)
+        )
+    elif policko == '┴':
+        return min(
+            lenght_to_zero('left', pos, my_map) + 1,
+            lenght_to_zero('right', pos, my_map) + 1,
+            lenght_to_zero('up', pos, my_map + 1)
+        )
+    elif policko == '┼':
+        return min(
+            lenght_to_zero('left', pos, my_map) + 1,
+            lenght_to_zero('right', pos, my_map) + 1,
+            lenght_to_zero('up', pos, my_map) + 1,
+            lenght_to_zero('down', pos, my_map + 1)
+        )
+    else:
+        return 10000
 
 
 def tremaux(robot: Robot, debug=True) -> None:
     seed = random.randrange(sys.maxsize)
     # seed = 2548946025440068861
     random.seed(seed)
-    print(f'Seed: {seed}', file=open('seed', 'w'))
+    print('Seed:', seed, file=open('seed', 'w'))
 
     my_map = [[Policko() for _ in range(10)] for _ in range(10)]
     my_maze = [['.' for _ in range(10)] for _ in range(10)]
@@ -254,9 +231,9 @@ def tremaux(robot: Robot, debug=True) -> None:
         my_maze[robot.pos.y][robot.pos.x] = current
         if debug:
             print('------')
-            print(f'pos: {robot.pos.x}, {robot.pos.y}')
-            print(f'orient: {robot.orientation.str_orient}')
-            print(f'current: {current}')
+            print('pos:', robot.pos.x, ',', robot.pos.y)
+            print('orient:', robot.orientation.str_orient)
+            print('current:', current)
             print()
             
         # on a straight line
@@ -265,25 +242,34 @@ def tremaux(robot: Robot, debug=True) -> None:
 
         # in a turn
         elif current in '┌┐└┘':
-            match current:
-                case '┌':
-                    if robot.orientation.str_orient == 'up':          robot.turn_right()
-                    elif robot.orientation.str_orient == 'left':        robot.turn_left()
-                    else:       raise ValueError(f'Invalid turn: {robot.orientation.str_orient}')
-                case '┐':
-                    if robot.orientation.str_orient == 'up':          robot.turn_left()
-                    elif robot.orientation.str_orient == 'right':       robot.turn_right()
-                    else:       raise ValueError(f'Invalid turn: {robot.orientation.str_orient}')
-                case '└':
-                    if robot.orientation.str_orient == 'down':        robot.turn_left()
-                    elif robot.orientation.str_orient == 'left':        robot.turn_right()
-                    else:       raise ValueError(f'Invalid turn: {robot.orientation.str_orient}')
-                case '┘':
-                    if robot.orientation.str_orient == 'down':        robot.turn_right()
-                    elif robot.orientation.str_orient == 'right':       robot.turn_left()
-                    else:       
-                        raise ValueError(f'Invalid turn: {robot.orientation.str_orient}')
-        
+            if current == '┌':
+                if robot.orientation.str_orient == 'up':
+                    robot.turn_right()
+                elif robot.orientation.str_orient == 'left':
+                    robot.turn_left()
+                else:
+                    raise ValueError('Invalid turn:', robot.orientation.str_orient)
+            elif current == '┐':
+                if robot.orientation.str_orient == 'up':
+                    robot.turn_left()
+                elif robot.orientation.str_orient == 'right':
+                    robot.turn_right()
+                else:
+                    raise ValueError('Invalid turn:', robot.orientation.str_orient)
+            elif current == '└':
+                if robot.orientation.str_orient == 'down':
+                    robot.turn_left()
+                elif robot.orientation.str_orient == 'left':
+                    robot.turn_right()
+                else:
+                    raise ValueError('Invalid turn:', robot.orientation.str_orient)
+            elif current == '┘':
+                if robot.orientation.str_orient == 'down':
+                    robot.turn_right()
+                elif robot.orientation.str_orient == 'right':
+                    robot.turn_left()
+                else:
+                    raise ValueError('Invalid turn:', robot.orientation.str_orient)
         elif current in '╴╵╶╷':
             robot.turn_around()
 
@@ -380,7 +366,7 @@ def tremaux(robot: Robot, debug=True) -> None:
     
         robot.forward() 
         if debug:
-            print(f'Number of zeroes: {number_of_zeroes}')
+            print('Number of zeroes:', number_of_zeroes)
             pprint_map(my_map, my_maze, robot.pos)
             sleep(0.2)
                     
