@@ -57,24 +57,61 @@ class Robot():
 
 
     def where_am_i(self) -> str:
-        return self.secret_mapa[self.pos.y][self.pos.x]
+        bottom = [
+            True if self.left_color.reflection() < self.target_color else False,
+            True if self.mid_color.reflection() < self.target_color else False,
+            True if self.right_color.reflection() < self.target_color else False
+        ]
+
+        if bottom == [True, False, False]: raise Exception('something went wrong')
+        if bottom == [False, False, True]: raise Exception('something went wrong')
+
+        top = [
+            True if self.left_color.reflection() < self.target_color else False,
+            True if self.mid_color.reflection() < self.target_color else False,
+            True if self.right_color.reflection() < self.target_color else False
+        ]
+
+        if top == [True, False, False]: raise Exception('something went wrong')
+        if top == [False, False, True]: raise Exception('something went wrong')
+
+        return self.where_dict[tuple(bottom)][tuple(top)][self.orientation.str_orient]
+
+    def step_a_inch(self) -> None:
+        self.drive_base.straight(self.wheel_center)
+
 
     def forward(self) -> None:
-        # todo
-        pass
+        curr = self.drive_base.distance()
+        while self.drive_base.distance() - curr < 150 - self.wheel_center:
+            # self.make_follow_step((self.drive_base.distance() - curr)/(150-self.wheel_center))
+            self.make_follow_step()
+        
+        self.drive_base.stop()
+
+    
+    def make_follow_step(self) -> None:
+        # part -= 0.5
+        # part = abs(part)*2
+        # part = 0.7-part
+        # part += 0.3
+
+        # print(part)
+
+        error = self.navigation_color.reflection() - self.target_color
+        error *= self.kp
+        self.drive_base.drive(self.speed, error)
+
 
 
     def turn_left(self) -> None:
-        # todo
-        pass
+        self.drive_base.turn(-90)
 
     def turn_right(self) -> None:
-        # todo
-        pass
+        self.drive_base.turn(90)
 
     def turn_around(self) -> None:
-        # todo
-        pass
+        self.drive_base.turn(180)
 
     def turn_absolute(self, orient: str) -> None:
         start = self.orientation.int_orient
@@ -93,18 +130,106 @@ class Robot():
         self.ev3 = EV3Brick()
         self.left_motor = Motor(Port.A)
         self.right_motor = Motor(Port.D)
+        self.wheel_center = 60
 
-        self.drive_base = DriveBase(self.left_motor, self.right_motor, 30, 156)
-        self.drive_base.settings(200, 100, 100, 50)
+        self.drive_base = DriveBase(self.left_motor, self.right_motor, 30.5, 169)
+        self.drive_base.settings(300, 150, 100, 100)
 
+        self.left_color = ColorSensor(Port.S3)
+        self.mid_color = ColorSensor(Port.S1)
+        self.right_color = ColorSensor(Port.S2)
+        self.navigation_color = ColorSensor(Port.S4)
+
+        self.target_color = 45
+        self.kp = 5
+        self.speed = 100
 
         # self.secret_mapa = self.load_mapa()
         # self.found_end = False
         self.pos = Position(0, 0)
         self.orientation = Orientation('right')
 
+        self.where_dict = {
+           # straight or dead end
+           (False, True, False): {
+                # straight
+               (False, True, False): {
+                    'up':       '│',
+                    'right':    '─',
+                    'down':     '│',
+                    'left':     '─'
+               },
+                # dead end
+                (False, False, False): {
+                    'up':       '╷',
+                    'right':    '╴',
+                    'down':     '╵',
+                    'left':     '╶'
+                }
+           },
+           # left turn or ┤
+           (True, True, False): {
+                # left turn
+                (False, False, False): {
+                    'up':       '┐',
+                    'right':    '┘',
+                    'down':     '└',
+                    'left':     '┌'
+                },
+                # ┤
+                (False, True, False): {
+                    'up':       '┤',
+                    'right':    '┴',
+                    'down':     '├',
+                    'left':     '┬'
+                }
+           },
+           # right turn or ├
+           (False, True, True): {
+                # right turn
+                (False, False, False): {
+                    'up':       '┌',
+                    'right':    '┐',
+                    'down':     '┘',
+                    'left':     '└'
+                },
+                # ├
+                (False, True, False): {
+                    'up':       '├',
+                    'right':    '┬',
+                    'down':     '┤',
+                    'left':     '┴'
+                }
+           },
+           # t-shape, cross or end
+           (True, True, True): {
+                # t-shapes
+                (False, False, False): {
+                    'up':       '┬',
+                    'right':    '┤',
+                    'down':     '┴',
+                    'left':     '├'
+                },
+                # cross
+                (False, True, False): {
+                    'up':       '┼',
+                    'right':    '┼',
+                    'down':     '┼',
+                    'left':     '┼'
+                },
+                # end
+                (True, True, True): {
+                    'up':       '■',
+                    'right':    '■',
+                    'down':     '■',
+                    'left':     '■'
+                }
+           },
+
+        }
+
 
         
 robot = Robot()
 print(robot.drive_base.settings())
-robot.drive_base.straight(4*150)
+# robot.drive_base.straight(4*150)
