@@ -1,4 +1,4 @@
-from robot import Robot
+from simuation import Robot
 from dataclasses import dataclass
 from time import sleep
 import random, sys
