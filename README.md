@@ -31,3 +31,11 @@ The biggest struggle right now is with software part of robot. For some reason, 
 Sadly, it was recorded with night-mode enabled... >:(
 
 [sim showcase](vids/simulation_video.webm)
+
+## Future plans
+- [ ] - make robot working
+- [ ] - add some optimalizations
+  - [ ] like cutting corners to save time 
+  - [ ] or prefering straight paths with less turns
+  - [ ] and accelerating more on long straights
+- [ ] - add some kind of ui to the robot
