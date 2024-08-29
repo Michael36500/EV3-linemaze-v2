@@ -1,8 +1,9 @@
+pass
 #!/usr/bin/env pybricks-micropython
 
-# from simuation import Robot
+from simuation import Robot
 
-from robot import Robot
+# from robot import Robot
 
 # from dataclasses import dataclass
 from time import sleep
@@ -273,9 +274,9 @@ def tremaux(robot: Robot, debug=True) -> None:
     itera = 0
     number_of_zeroes = 1
 
-    robot.ev3.speaker.beep()
+    # robot.ev3.speaker.beep()
     # input("continue?")
-    sleep(5)
+    # sleep(5)
 
     while True:
         itera += 1
@@ -446,23 +447,21 @@ def tremaux(robot: Robot, debug=True) -> None:
 def main(debug=True) -> None:
     # map_size = 10
     robot = Robot()
-    # return tremaux(robot, debug)
-    robot.forward()
-    robot.step_a_inch()
-    robot.forward()
-    robot.step_a_inch()
-    robot.forward()
-    robot.step_a_inch()
-    robot.turn_right()
-    robot.forward()
-    robot.step_a_inch()
-    robot.turn_left()
-    robot.forward()
-    robot.step_a_inch()
-    robot.turn_right()
-    robot.forward()
-    robot.step_a_inch()
+    return tremaux(robot, debug)
+    # robot.forward()
+    # robot.step_a_inch()
+    # robot.forward()
+    # robot.step_a_inch()
+    # robot.turn_right()
+    # robot.forward()
+    # robot.step_a_inch()
+    # robot.turn_left()
+    # robot.forward()
+    # robot.step_a_inch()
+    # robot.turn_right()
+    # robot.forward()
+    # robot.step_a_inch()
 
 
 if __name__ == "__main__":
-    main(debug=False)
+    main()
