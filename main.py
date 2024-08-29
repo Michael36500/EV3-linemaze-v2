@@ -1,6 +1,7 @@
 #!/usr/bin/env pybricks-micropython
 
 # from simuation import Robot
+
 from robot import Robot
 
 # from dataclasses import dataclass
@@ -260,7 +261,7 @@ def is_there_zero(policko: Policko) -> bool:
 
 def tremaux(robot: Robot, debug=True) -> None:
     seed = random.randrange(sys.maxsize)
-    # seed = 2548946025440068861
+    seed = 47
     random.seed(seed)
     print("Seed:", seed, file=open("seed", "w"))
 
@@ -273,7 +274,8 @@ def tremaux(robot: Robot, debug=True) -> None:
     number_of_zeroes = 1
 
     robot.ev3.speaker.beep()
-    input("continue?")
+    # input("continue?")
+    sleep(5)
 
     while True:
         itera += 1
@@ -401,11 +403,11 @@ def tremaux(robot: Robot, debug=True) -> None:
 
             # print(my_map[robot.pos.y][robot.pos.x].__dict__)
             # print(f'heading: {robot.orientation.str_orient}')
-            if (
-                my_map[robot.pos.y][robot.pos.x].__dict__[robot.orientation.str_orient]
-                == 0
-            ):
-                number_of_zeroes -= 1
+            # if (
+            #     my_map[robot.pos.y][robot.pos.x].__dict__[robot.orientation.str_orient]
+            #     == 0
+            # ):
+            #     number_of_zeroes -= 1
             my_map[robot.pos.y][robot.pos.x].__dict__[robot.orientation.str_orient] += 1
 
             # print(policko.__dict__)
@@ -426,9 +428,9 @@ def tremaux(robot: Robot, debug=True) -> None:
 
         robot.forward()
         if debug:
-            print("Number of zeroes:", number_of_zeroes)
+            # print("Number of zeroes:", number_of_zeroes)
             pprint_map(my_map, my_maze, robot.pos)
-            sleep(0.1)
+            sleep(0.3)
 
         if number_of_zeroes == 0:
             if debug:
@@ -448,4 +450,4 @@ def main(debug=True) -> None:
 
 
 if __name__ == "__main__":
-    main()
+    main(debug=False)

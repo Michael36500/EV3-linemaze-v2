@@ -214,8 +214,8 @@ class Robot:
 
         # self.secret_mapa = self.load_mapa()
         # self.found_end = False
-        self.pos = Position(0, 5)
-        self.orientation = Orientation("up")
+        self.pos = Position(0, 0)
+        self.orientation = Orientation("right")
 
         self.dict_where = {
             # straight or dead end
