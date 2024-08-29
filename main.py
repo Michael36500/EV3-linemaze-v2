@@ -444,9 +444,24 @@ def tremaux(robot: Robot, debug=True) -> None:
 
 
 def main(debug=True) -> None:
-    map_size = 10
+    # map_size = 10
     robot = Robot()
-    return tremaux(robot, debug)
+    # return tremaux(robot, debug)
+    robot.forward()
+    robot.step_a_inch()
+    robot.forward()
+    robot.step_a_inch()
+    robot.forward()
+    robot.step_a_inch()
+    robot.turn_right()
+    robot.forward()
+    robot.step_a_inch()
+    robot.turn_left()
+    robot.forward()
+    robot.step_a_inch()
+    robot.turn_right()
+    robot.forward()
+    robot.step_a_inch()
 
 
 if __name__ == "__main__":
