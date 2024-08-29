@@ -65,6 +65,7 @@ class Robot:
     #     return mapa
 
     def where_am_i(self) -> str:
+        print("where am i")
         bottom = [
             True if self.left_color.reflection() < self.target_color else False,
             True if self.mid_color.reflection() < self.target_color else False,
@@ -75,6 +76,8 @@ class Robot:
             raise Exception("something went wrong")
         if bottom == [False, False, True]:
             raise Exception("something went wrong")
+
+        self.step_a_inch()
 
         top = [
             True if self.left_color.reflection() < self.target_color else False,
@@ -87,14 +90,31 @@ class Robot:
         if top == [False, False, True]:
             raise Exception("something went wrong")
 
-        return self.where_dict[tuple(bottom)][tuple(top)][self.orientation.str_orient]
+        print(top)
+        print(bottom)
+
+        try:
+            return self.dict_where[tuple(bottom)][tuple(top)][
+                self.orientation.str_orient
+            ]
+        except KeyError as e:
+            print("bottom", bottom)
+            print("top", top)
+            print("orient", self.orientation.str_orient)
+            raise KeyError(e)
 
     def step_a_inch(self) -> None:
-        self.drive_base.straight(self.wheel_center)
+        print("step a inch")
+        curr = self.drive_base.distance()
+        while self.drive_base.distance() - curr < self.distance_wheels:
+            self.make_follow_step()
+
+        self.drive_base.stop()
 
     def forward(self) -> None:
+        print("forward")
         curr = self.drive_base.distance()
-        while self.drive_base.distance() - curr < 150 - self.wheel_center:
+        while self.drive_base.distance() - curr < 150 - 23 - self.distance_wheels:
             # self.make_follow_step((self.drive_base.distance() - curr)/(150-self.wheel_center))
             self.make_follow_step()
 
@@ -110,18 +130,23 @@ class Robot:
 
         error = self.navigation_color.reflection() - self.target_color
         error *= self.kp
+        # print(error)
         self.drive_base.drive(self.speed, error)
 
     def turn_left(self) -> None:
+        print("turn left")
         self.drive_base.turn(-90)
 
     def turn_right(self) -> None:
+        print("turn right")
         self.drive_base.turn(90)
 
     def turn_around(self) -> None:
+        print("turn around")
         self.drive_base.turn(180)
 
     def turn_absolute(self, orient: str) -> None:
+        print("turn absolute", orient)
         start = self.orientation.int_orient
         end = Orientation.str2num("self", orient)
         # print(f'start: {start}, end: {end}')
@@ -139,7 +164,7 @@ class Robot:
         self.ev3 = EV3Brick()
         self.left_motor = Motor(Port.A)
         self.right_motor = Motor(Port.D)
-        self.wheel_center = 60
+        self.distance_wheels = 70
 
         self.drive_base = DriveBase(self.left_motor, self.right_motor, 30.5, 169)
         self.drive_base.settings(300, 150, 100, 100)
@@ -149,16 +174,16 @@ class Robot:
         self.right_color = ColorSensor(Port.S2)
         self.navigation_color = ColorSensor(Port.S4)
 
-        self.target_color = 45
-        self.kp = 5
+        self.target_color = 38
+        self.kp = -1.0
         self.speed = 100
 
         # self.secret_mapa = self.load_mapa()
         # self.found_end = False
         self.pos = Position(0, 0)
-        self.orientation = Orientation("right")
+        self.orientation = Orientation("left")
 
-        self.where_dict = {
+        self.dict_where = {
             # straight or dead end
             (False, True, False): {
                 # straight
@@ -232,6 +257,12 @@ class Robot:
         }
 
 
-robot = Robot()
-print(robot.drive_base.settings())
+# robot = Robot()
+# print(robot.drive_base.settings())
 # robot.drive_base.straight(4*150)
+
+if __name__ == "__main__":
+    r = Robot()
+    r.where_am_i()
+    r.turn_right()
+    r.forward()

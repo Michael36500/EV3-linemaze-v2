@@ -1,5 +1,6 @@
 #!/usr/bin/env pybricks-micropython
 
+# from simuation import Robot
 from robot import Robot
 
 # from dataclasses import dataclass
@@ -95,7 +96,11 @@ def charing(dot: str, maze_char: str, direction: str) -> str:
         else:
             return str(dot)
     except:
-        return maze_chars_around[maze_char][direction]
+        try:
+            return maze_chars_around[maze_char][direction]
+        except:
+            return " "
+        # return dot
 
 
 def pprint_map(map: list, maze: list, pos) -> None:
@@ -171,84 +176,84 @@ def is_there_zero(policko: Policko) -> bool:
     return False
 
 
-def lenght_to_zero(key: str, pos, my_map) -> int:
-    x = pos.x
-    y = pos.y
-    if key == "up":
-        y -= 1
-    elif key == "right":
-        x += 1
-    elif key == "down":
-        y += 1
-    elif key == "left":
-        x -= 1
+# def lenght_to_zero(key: str, pos, my_map) -> int:
+#     x = pos.x
+#     y = pos.y
+#     if key == "up":
+#         y -= 1
+#     elif key == "right":
+#         x += 1
+#     elif key == "down":
+#         y += 1
+#     elif key == "left":
+#         x -= 1
 
-    policko = my_map[y][x]
-    if is_there_zero(policko):
-        return 1
-    if policko == "─":
-        return min(
-            lenght_to_zero("left", pos, my_map) + 1,
-            lenght_to_zero("right", pos, my_map + 1),
-        )
-    elif policko == "│":
-        return min(
-            lenght_to_zero("up", pos, my_map) + 1,
-            lenght_to_zero("down", pos, my_map + 1),
-        )
-    elif policko == "┌":
-        return min(
-            lenght_to_zero("right", pos, my_map) + 1,
-            lenght_to_zero("down", pos, my_map + 1),
-        )
-    elif policko == "┐":
-        return min(
-            lenght_to_zero("left", pos, my_map) + 1,
-            lenght_to_zero("down", pos, my_map + 1),
-        )
-    elif policko == "┘":
-        return min(
-            lenght_to_zero("left", pos, my_map) + 1,
-            lenght_to_zero("up", pos, my_map + 1),
-        )
-    elif policko == "├":
-        return min(
-            lenght_to_zero("up", pos, my_map) + 1,
-            lenght_to_zero("right", pos, my_map) + 1,
-            lenght_to_zero("down", pos, my_map + 1),
-        )
-    elif policko == "└":
-        return min(
-            lenght_to_zero("up", pos, my_map) + 1,
-            lenght_to_zero("right", pos, my_map) + 1,
-        )
-    elif policko == "┤":
-        return min(
-            lenght_to_zero("up", pos, my_map) + 1,
-            lenght_to_zero("left", pos, my_map) + 1,
-            lenght_to_zero("down", pos, my_map + 1),
-        )
-    elif policko == "┬":
-        return min(
-            lenght_to_zero("left", pos, my_map) + 1,
-            lenght_to_zero("right", pos, my_map) + 1,
-            lenght_to_zero("down", pos, my_map + 1),
-        )
-    elif policko == "┴":
-        return min(
-            lenght_to_zero("left", pos, my_map) + 1,
-            lenght_to_zero("right", pos, my_map) + 1,
-            lenght_to_zero("up", pos, my_map + 1),
-        )
-    elif policko == "┼":
-        return min(
-            lenght_to_zero("left", pos, my_map) + 1,
-            lenght_to_zero("right", pos, my_map) + 1,
-            lenght_to_zero("up", pos, my_map) + 1,
-            lenght_to_zero("down", pos, my_map + 1),
-        )
-    else:
-        return 10000
+#     policko = my_map[y][x]
+#     if is_there_zero(policko):
+#         return 1
+#     if policko == "─":
+#         return min(
+#             lenght_to_zero("left", pos, my_map) + 1,
+#             lenght_to_zero("right", pos, my_map + 1),
+#         )
+#     elif policko == "│":
+#         return min(
+#             lenght_to_zero("up", pos, my_map) + 1,
+#             lenght_to_zero("down", pos, my_map + 1),
+#         )
+#     elif policko == "┌":
+#         return min(
+#             lenght_to_zero("right", pos, my_map) + 1,
+#             lenght_to_zero("down", pos, my_map + 1),
+#         )
+#     elif policko == "┐":
+#         return min(
+#             lenght_to_zero("left", pos, my_map) + 1,
+#             lenght_to_zero("down", pos, my_map + 1),
+#         )
+#     elif policko == "┘":
+#         return min(
+#             lenght_to_zero("left", pos, my_map) + 1,
+#             lenght_to_zero("up", pos, my_map + 1),
+#         )
+#     elif policko == "├":
+#         return min(
+#             lenght_to_zero("up", pos, my_map) + 1,
+#             lenght_to_zero("right", pos, my_map) + 1,
+#             lenght_to_zero("down", pos, my_map + 1),
+#         )
+#     elif policko == "└":
+#         return min(
+#             lenght_to_zero("up", pos, my_map) + 1,
+#             lenght_to_zero("right", pos, my_map) + 1,
+#         )
+#     elif policko == "┤":
+#         return min(
+#             lenght_to_zero("up", pos, my_map) + 1,
+#             lenght_to_zero("left", pos, my_map) + 1,
+#             lenght_to_zero("down", pos, my_map + 1),
+#         )
+#     elif policko == "┬":
+#         return min(
+#             lenght_to_zero("left", pos, my_map) + 1,
+#             lenght_to_zero("right", pos, my_map) + 1,
+#             lenght_to_zero("down", pos, my_map + 1),
+#         )
+#     elif policko == "┴":
+#         return min(
+#             lenght_to_zero("left", pos, my_map) + 1,
+#             lenght_to_zero("right", pos, my_map) + 1,
+#             lenght_to_zero("up", pos, my_map + 1),
+#         )
+#     elif policko == "┼":
+#         return min(
+#             lenght_to_zero("left", pos, my_map) + 1,
+#             lenght_to_zero("right", pos, my_map) + 1,
+#             lenght_to_zero("up", pos, my_map) + 1,
+#             lenght_to_zero("down", pos, my_map + 1),
+#         )
+#     else:
+#         return 10000
 
 
 def tremaux(robot: Robot, debug=True) -> None:
@@ -260,12 +265,13 @@ def tremaux(robot: Robot, debug=True) -> None:
     my_map = [[Policko() for _ in range(10)] for _ in range(10)]
     my_maze = [["." for _ in range(10)] for _ in range(10)]
 
-    robot.forward()
+    # robot.forward()
 
     itera = 0
-    number_of_zeroes = 0
+    number_of_zeroes = 1
 
     while True:
+        input("continue?")
         itera += 1
         # print(f'Itera: {itera}')
         current = robot.where_am_i()
