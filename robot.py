@@ -73,8 +73,10 @@ class Robot:
         ]
 
         if bottom == [True, False, False]:
+            print(bottom)
             raise Exception("something went wrong")
         if bottom == [False, False, True]:
+            print(bottom)
             raise Exception("something went wrong")
 
         self.step_a_inch()
@@ -86,8 +88,10 @@ class Robot:
         ]
 
         if top == [True, False, False]:
+            print(top)
             raise Exception("something went wrong")
         if top == [False, False, True]:
+            print(top)
             raise Exception("something went wrong")
 
         print(top)
@@ -95,7 +99,7 @@ class Robot:
 
         try:
             return self.dict_where[tuple(bottom)][tuple(top)][
-                self.orientation.str_orient
+                self.orientation.num2str(self.orientation.int_orient)
             ]
         except KeyError as e:
             print("bottom", bottom)
@@ -113,12 +117,38 @@ class Robot:
 
     def forward(self) -> None:
         print("forward")
-        curr = self.drive_base.distance()
-        while self.drive_base.distance() - curr < 150 - 23 - self.distance_wheels:
-            # self.make_follow_step((self.drive_base.distance() - curr)/(150-self.wheel_center))
+        # curr = self.drive_base.distance()
+        # while self.drive_base.distance() - curr < 150 - 23 - self.distance_wheels:
+        # self.make_follow_step((self.drive_base.distance() - curr)/(150-self.wheel_center))
+        # self.make_follow_step()
+        start_lenght = self.drive_base.distance()
+
+        while (
+            self.left_color.reflection() > self.target_color
+            and self.right_color.reflection() > self.target_color
+            and self.drive_base.distance() - start_lenght
+            < 150 + 20 - self.distance_wheels
+        ):
             self.make_follow_step()
 
         self.drive_base.stop()
+        self.left_motor.hold()
+        self.right_motor.hold()
+
+        if self.drive_base.distance() - start_lenght >= 150 + 20 - self.distance_wheels:
+            self.drive_base.straight(-20)
+
+        lenght = 1
+        if self.orientation.str_orient == "up":
+            self.pos.y -= lenght
+        elif self.orientation.str_orient == "right":
+            self.pos.x += lenght
+        elif self.orientation.str_orient == "down":
+            self.pos.y += lenght
+        elif self.orientation.str_orient == "left":
+            self.pos.x -= lenght
+        else:
+            raise ValueError("Invalid orientation")
 
     def make_follow_step(self) -> None:
         # part -= 0.5
@@ -136,14 +166,18 @@ class Robot:
     def turn_left(self) -> None:
         print("turn left")
         self.drive_base.turn(-90)
+        self.orientation.left()
 
     def turn_right(self) -> None:
         print("turn right")
         self.drive_base.turn(90)
+        self.orientation.right()
 
     def turn_around(self) -> None:
         print("turn around")
         self.drive_base.turn(180)
+        self.orientation.left()
+        self.orientation.left()
 
     def turn_absolute(self, orient: str) -> None:
         print("turn absolute", orient)
@@ -180,8 +214,8 @@ class Robot:
 
         # self.secret_mapa = self.load_mapa()
         # self.found_end = False
-        self.pos = Position(0, 0)
-        self.orientation = Orientation("left")
+        self.pos = Position(0, 5)
+        self.orientation = Orientation("up")
 
         self.dict_where = {
             # straight or dead end
@@ -263,6 +297,6 @@ class Robot:
 
 if __name__ == "__main__":
     r = Robot()
-    r.where_am_i()
-    r.turn_right()
-    r.forward()
+    # r.where_am_i()
+    # r.turn_right()
+    # r.forward()

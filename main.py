@@ -159,6 +159,8 @@ def pprint_map(map: list, maze: list, pos) -> None:
                     + "   "
                 )
 
+        if mid.strip() == "":
+            continue
         print(top)
         print(mid)
         print(bot)
@@ -265,13 +267,15 @@ def tremaux(robot: Robot, debug=True) -> None:
     my_map = [[Policko() for _ in range(10)] for _ in range(10)]
     my_maze = [["." for _ in range(10)] for _ in range(10)]
 
-    # robot.forward()
+    robot.forward()
 
     itera = 0
     number_of_zeroes = 1
 
+    robot.ev3.speaker.beep()
+    input("continue?")
+
     while True:
-        input("continue?")
         itera += 1
         # print(f'Itera: {itera}')
         current = robot.where_am_i()
@@ -416,7 +420,7 @@ def tremaux(robot: Robot, debug=True) -> None:
             # pprint_map(my_map, my_maze)
             # exit(0)
             robot.turn_around()
-            # robot.forward()
+            robot.forward()
 
             # sleep(1)
 
@@ -424,7 +428,7 @@ def tremaux(robot: Robot, debug=True) -> None:
         if debug:
             print("Number of zeroes:", number_of_zeroes)
             pprint_map(my_map, my_maze, robot.pos)
-            sleep(0.2)
+            sleep(0.1)
 
         if number_of_zeroes == 0:
             if debug:

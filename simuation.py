@@ -51,7 +51,7 @@ class Orientation:
 class Robot:
     def load_mapa(_) -> List[List[str]]:
         mapa = []
-        with open("maze2") as f:
+        with open("maze") as f:
             for line in f:
                 lin = []
                 for char in line:
