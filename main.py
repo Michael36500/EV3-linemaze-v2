@@ -1,4 +1,3 @@
-pass
 #!/usr/bin/env pybricks-micropython
 
 from simuation import Robot
