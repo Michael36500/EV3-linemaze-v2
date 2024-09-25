@@ -6,13 +6,13 @@ from typing import *
 
 class Position:
     # @enforce_types
-    def __init__(self, x: int, y: int) -> None:
-        self.x = x
-        self.y = y
+    def __init__(slef, x: int, y: int) -> None:
+        slef.x = x
+        slef.y = y
 
 
 class Orientation:
-    def num2str(self, num: int) -> str:
+    def num2str(slef, num: int) -> str:
         if num == 0:
             return "up"
         if num == 1:
@@ -22,7 +22,7 @@ class Orientation:
         if num == 3:
             return "left"
 
-    def str2num(self, stri: str) -> int:
+    def str2num(slef, stri: str) -> int:
         if stri == "up":
             return 0
         if stri == "right":
@@ -32,20 +32,20 @@ class Orientation:
         if stri == "left":
             return 3
 
-    def __init__(self, starting: str) -> None:
+    def __init__(slef, starting: str) -> None:
         if starting not in ["up", "right", "down", "left"]:
             raise ValueError("Invalid orientation")
 
-        self.str_orient = starting
-        self.int_orient = self.str2num(starting)
+        slef.str_orient = starting
+        slef.int_orient = slef.str2num(starting)
 
-    def left(self) -> None:
-        self.int_orient = (self.int_orient - 1) % 4
-        self.str_orient = self.num2str(self.int_orient)
+    def left(slef) -> None:
+        slef.int_orient = (slef.int_orient - 1) % 4
+        slef.str_orient = slef.num2str(slef.int_orient)
 
-    def right(self) -> None:
-        self.int_orient = (self.int_orient + 1) % 4
-        self.str_orient = self.num2str(self.int_orient)
+    def right(slef) -> None:
+        slef.int_orient = (slef.int_orient + 1) % 4
+        slef.str_orient = slef.num2str(slef.int_orient)
 
 
 class Robot:
@@ -62,178 +62,178 @@ class Robot:
                 mapa.append(lin)
         return mapa
 
-    def where_am_i(self) -> str:
-        return self.secret_mapa[self.pos.y][self.pos.x]
+    def where_am_i(slef) -> str:
+        return slef.secret_mapa[slef.pos.y][slef.pos.x]
 
-    def forward(self) -> None:
+    def forward(slef) -> None:
         # check if all alrigh
         ## check if orient is valid
-        if self.orientation.str_orient not in ["up", "right", "down", "left"]:
-            raise ValueError(f"Invalid orientation: {self.orientation.str_orient}")
+        if slef.orientation.str_orient not in ["up", "right", "down", "left"]:
+            raise ValueError(f"Invalid orientation: {slef.orientation.str_orient}")
 
         ## check if out of bounds
-        if self.orientation.str_orient == "up" and self.pos.y - 1 < -1:
+        if slef.orientation.str_orient == "up" and slef.pos.y - 1 < -1:
             raise ValueError(
-                f"Out of bounds: {self.pos.x}, {self.pos.y}, {self.orientation.str_orient}"
+                f"Out of bounds: {slef.pos.x}, {slef.pos.y}, {slef.orientation.str_orient}"
             )
-        if self.orientation.str_orient == "right" and self.pos.x == len(
-            self.secret_mapa[0]
+        if slef.orientation.str_orient == "right" and slef.pos.x == len(
+            slef.secret_mapa[0]
         ):
             raise ValueError(
-                f"Out of bounds: {self.pos.x}, {self.pos.y}, {self.orientation.str_orient}"
+                f"Out of bounds: {slef.pos.x}, {slef.pos.y}, {slef.orientation.str_orient}"
             )
-        if self.orientation.str_orient == "down" and self.pos.y == len(
-            self.secret_mapa
+        if slef.orientation.str_orient == "down" and slef.pos.y == len(
+            slef.secret_mapa
         ):
             raise ValueError(
-                f"Out of bounds: {self.pos.x}, {self.pos.y}, {self.orientation.str_orient}"
+                f"Out of bounds: {slef.pos.x}, {slef.pos.y}, {slef.orientation.str_orient}"
             )
-        if self.orientation.str_orient == "left" and self.pos.x - 1 < -1:
+        if slef.orientation.str_orient == "left" and slef.pos.x - 1 < -1:
             raise ValueError(
-                f"Out of bounds: {self.pos.x}, {self.pos.y}, {self.orientation.str_orient}"
+                f"Out of bounds: {slef.pos.x}, {slef.pos.y}, {slef.orientation.str_orient}"
             )
 
         ## check if wall
-        current: str = self.secret_mapa[self.pos.y][self.pos.x]
+        current: str = slef.secret_mapa[slef.pos.y][slef.pos.x]
         match current:
             case "╴":
-                # print(self.orientation.str_orient != 'left')
-                if self.orientation.str_orient != "left":
+                # print(slef.orientation.str_orient != 'left')
+                if slef.orientation.str_orient != "left":
                     raise ValueError(
-                        f"Wall: {self.pos.x}, {self.pos.y}, {self.orientation.str_orient}. {current}"
+                        f"Wall: {slef.pos.x}, {slef.pos.y}, {slef.orientation.str_orient}. {current}"
                     )
             case "╵":
-                if self.orientation.str_orient != "up":
+                if slef.orientation.str_orient != "up":
                     raise ValueError(
-                        f"Wall: {self.pos.x}, {self.pos.y}, {self.orientation.str_orient}. {current}"
+                        f"Wall: {slef.pos.x}, {slef.pos.y}, {slef.orientation.str_orient}. {current}"
                     )
             case "╶":
-                if self.orientation.str_orient != "right":
+                if slef.orientation.str_orient != "right":
                     raise ValueError(
-                        f"Wall: {self.pos.x}, {self.pos.y}, {self.orientation.str_orient}. {current}"
+                        f"Wall: {slef.pos.x}, {slef.pos.y}, {slef.orientation.str_orient}. {current}"
                     )
             case "╷":
-                if self.orientation.str_orient != "down":
+                if slef.orientation.str_orient != "down":
                     raise ValueError(
-                        f"Wall: {self.pos.x}, {self.pos.y}, {self.orientation.str_orient}. {current}"
+                        f"Wall: {slef.pos.x}, {slef.pos.y}, {slef.orientation.str_orient}. {current}"
                     )
             case "─":
                 if (
-                    self.orientation.str_orient == "up"
-                    or self.orientation.str_orient == "down"
+                    slef.orientation.str_orient == "up"
+                    or slef.orientation.str_orient == "down"
                 ):
                     raise ValueError(
-                        f"Wall: {self.pos.x}, {self.pos.y}, {self.orientation.str_orient}. {current}"
+                        f"Wall: {slef.pos.x}, {slef.pos.y}, {slef.orientation.str_orient}. {current}"
                     )
             case "│":
                 if (
-                    self.orientation.str_orient == "right"
-                    or self.orientation.str_orient == "left"
+                    slef.orientation.str_orient == "right"
+                    or slef.orientation.str_orient == "left"
                 ):
                     raise ValueError(
-                        f"Wall: {self.pos.x}, {self.pos.y}, {self.orientation.str_orient}. {current}"
+                        f"Wall: {slef.pos.x}, {slef.pos.y}, {slef.orientation.str_orient}. {current}"
                     )
             case "┌":
                 if (
-                    self.orientation.str_orient == "left"
-                    or self.orientation.str_orient == "up"
+                    slef.orientation.str_orient == "left"
+                    or slef.orientation.str_orient == "up"
                 ):
                     raise ValueError(
-                        f"Wall: {self.pos.x}, {self.pos.y}, {self.orientation.str_orient}. {current}"
+                        f"Wall: {slef.pos.x}, {slef.pos.y}, {slef.orientation.str_orient}. {current}"
                     )
             case "┐":
                 if (
-                    self.orientation.str_orient == "right"
-                    or self.orientation.str_orient == "up"
+                    slef.orientation.str_orient == "right"
+                    or slef.orientation.str_orient == "up"
                 ):
                     raise ValueError(
-                        f"Wall: {self.pos.x}, {self.pos.y}, {self.orientation.str_orient}. {current}"
+                        f"Wall: {slef.pos.x}, {slef.pos.y}, {slef.orientation.str_orient}. {current}"
                     )
             case "└":
                 if (
-                    self.orientation.str_orient == "left"
-                    or self.orientation.str_orient == "down"
+                    slef.orientation.str_orient == "left"
+                    or slef.orientation.str_orient == "down"
                 ):
                     raise ValueError(
-                        f"Wall: {self.pos.x}, {self.pos.y}, {self.orientation.str_orient}. {current}"
+                        f"Wall: {slef.pos.x}, {slef.pos.y}, {slef.orientation.str_orient}. {current}"
                     )
             case "┘":
                 if (
-                    self.orientation.str_orient == "right"
-                    or self.orientation.str_orient == "down"
+                    slef.orientation.str_orient == "right"
+                    or slef.orientation.str_orient == "down"
                 ):
                     raise ValueError(
-                        f"Wall: {self.pos.x}, {self.pos.y}, {self.orientation.str_orient}. {current}"
+                        f"Wall: {slef.pos.x}, {slef.pos.y}, {slef.orientation.str_orient}. {current}"
                     )
             case "├":
-                if self.orientation.str_orient == "left":
+                if slef.orientation.str_orient == "left":
                     raise ValueError(
-                        f"Wall: {self.pos.x}, {self.pos.y}, {self.orientation.str_orient}. {current}"
+                        f"Wall: {slef.pos.x}, {slef.pos.y}, {slef.orientation.str_orient}. {current}"
                     )
             case "┤":
-                if self.orientation.str_orient == "right":
+                if slef.orientation.str_orient == "right":
                     raise ValueError(
-                        f"Wall: {self.pos.x}, {self.pos.y}, {self.orientation.str_orient}. {current}"
+                        f"Wall: {slef.pos.x}, {slef.pos.y}, {slef.orientation.str_orient}. {current}"
                     )
             case "┬":
-                if self.orientation.str_orient == "up":
+                if slef.orientation.str_orient == "up":
                     raise ValueError(
-                        f"Wall: {self.pos.x}, {self.pos.y}, {self.orientation.str_orient}. {current}"
+                        f"Wall: {slef.pos.x}, {slef.pos.y}, {slef.orientation.str_orient}. {current}"
                     )
             case "┴":
-                if self.orientation.str_orient == "down":
+                if slef.orientation.str_orient == "down":
                     raise ValueError(
-                        f"Wall: {self.pos.x}, {self.pos.y}, {self.orientation.str_orient}. {current}"
+                        f"Wall: {slef.pos.x}, {slef.pos.y}, {slef.orientation.str_orient}. {current}"
                     )
             case "┼":
                 pass
             case "■":
-                if not self.found_end:
-                    self.found_end = True
+                if not slef.found_end:
+                    slef.found_end = True
                     return "end"
                 else:
                     # print('End already found')
                     pass
             case _:
                 raise ValueError(
-                    f"Invalid character: {current} at {self.pos.x}, {self.pos.y}"
+                    f"Invalid character: {current} at {slef.pos.x}, {slef.pos.y}"
                 )
 
-        if self.orientation.str_orient == "up":
-            self.pos.y -= 1
-        if self.orientation.str_orient == "right":
-            self.pos.x += 1
-        if self.orientation.str_orient == "down":
-            self.pos.y += 1
-        if self.orientation.str_orient == "left":
-            self.pos.x -= 1
+        if slef.orientation.str_orient == "up":
+            slef.pos.y -= 1
+        if slef.orientation.str_orient == "right":
+            slef.pos.x += 1
+        if slef.orientation.str_orient == "down":
+            slef.pos.y += 1
+        if slef.orientation.str_orient == "left":
+            slef.pos.x -= 1
 
-    def turn_left(self) -> None:
-        self.orientation.left()
+    def turn_left(slef) -> None:
+        slef.orientation.left()
 
-    def turn_right(self) -> None:
-        self.orientation.right()
+    def turn_right(slef) -> None:
+        slef.orientation.right()
 
-    def turn_around(self) -> None:
-        self.turn_left()
-        self.turn_left()
+    def turn_around(slef) -> None:
+        slef.turn_left()
+        slef.turn_left()
 
-    def turn_absolute(self, orient: str) -> None:
-        start = self.orientation.int_orient
-        end = Orientation.str2num("self", orient)
+    def turn_absolute(slef, orient: str) -> None:
+        start = slef.orientation.int_orient
+        end = Orientation.str2num("slef", orient)
         # print(f'start: {start}, end: {end}')
 
         if start == end:
             return
         if (start - end) % 4 == 1:
-            self.turn_left()
+            slef.turn_left()
         if (start - end) % 4 == 3:
-            self.turn_right()
+            slef.turn_right()
         if (start - end) % 4 == 2:
-            self.turn_around()
+            slef.turn_around()
 
-    def __init__(self) -> None:
-        self.secret_mapa = self.load_mapa()
-        self.found_end = False
-        self.pos = Position(0, 0)
-        self.orientation = Orientation("right")
+    def __init__(slef) -> None:
+        slef.secret_mapa = slef.load_mapa()
+        slef.found_end = False
+        slef.pos = Position(0, 0)
+        slef.orientation = Orientation("right")

@@ -1,8 +1,8 @@
 #!/usr/bin/env pybricks-micropython
 
-from simuation import Robot
+# from simuation import Robot
 
-# from robot import Robot
+from robot import Robot
 
 # from dataclasses import dataclass
 from time import sleep
@@ -18,11 +18,11 @@ import random, sys
 
 
 class Policko:
-    def __init__(self) -> None:
-        self.up = 0
-        self.right = 0
-        self.down = 0
-        self.left = 0
+    def __init__(slef) -> None:
+        slef.up = 0
+        slef.right = 0
+        slef.down = 0
+        slef.left = 0
 
 
 def pprint_maze(mapa: list) -> None:

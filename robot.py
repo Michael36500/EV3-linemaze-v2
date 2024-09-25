@@ -9,13 +9,13 @@ from pybricks.robotics import DriveBase
 
 
 class Position:
-    def __init__(self, x: int, y: int) -> None:
-        self.x = x
-        self.y = y
+    def __init__(slef, x: int, y: int) -> None:
+        slef.x = x
+        slef.y = y
 
 
 class Orientation:
-    def num2str(self, num: int) -> str:
+    def num2str(slef, num: int) -> str:
         if num == 0:
             return "up"
         if num == 1:
@@ -25,7 +25,7 @@ class Orientation:
         if num == 3:
             return "left"
 
-    def str2num(self, stri: str) -> int:
+    def str2num(slef, stri: str) -> int:
         if stri == "up":
             return 0
         if stri == "right":
@@ -35,20 +35,20 @@ class Orientation:
         if stri == "left":
             return 3
 
-    def __init__(self, starting: str) -> None:
+    def __init__(slef, starting: str) -> None:
         if starting not in ["up", "right", "down", "left"]:
             raise ValueError("Invalid orientation")
 
-        self.str_orient = starting
-        self.int_orient = self.str2num(starting)
+        slef.str_orient = starting
+        slef.int_orient = slef.str2num(starting)
 
-    def left(self) -> None:
-        self.int_orient = (self.int_orient - 1) % 4
-        self.str_orient = self.num2str(self.int_orient)
+    def left(slef) -> None:
+        slef.int_orient = (slef.int_orient - 1) % 4
+        slef.str_orient = slef.num2str(slef.int_orient)
 
-    def right(self) -> None:
-        self.int_orient = (self.int_orient + 1) % 4
-        self.str_orient = self.num2str(self.int_orient)
+    def right(slef) -> None:
+        slef.int_orient = (slef.int_orient + 1) % 4
+        slef.str_orient = slef.num2str(slef.int_orient)
 
 
 class Robot:
@@ -64,12 +64,12 @@ class Robot:
     #             mapa.append(lin)
     #     return mapa
 
-    def where_am_i(self) -> str:
+    def where_am_i(slef) -> str:
         print("where am i")
         bottom = [
-            True if self.left_color.reflection() < self.target_color else False,
-            True if self.mid_color.reflection() < self.target_color else False,
-            True if self.right_color.reflection() < self.target_color else False,
+            True if slef.left_color.reflection() < slef.target_color else False,
+            True if slef.mid_color.reflection() < slef.target_color else False,
+            True if slef.right_color.reflection() < slef.target_color else False,
         ]
 
         if bottom == [True, False, False]:
@@ -79,12 +79,12 @@ class Robot:
             print(bottom)
             raise Exception("something went wrong")
 
-        self.step_a_inch()
+        slef.step_a_inch()
 
         top = [
-            True if self.left_color.reflection() < self.target_color else False,
-            True if self.mid_color.reflection() < self.target_color else False,
-            True if self.right_color.reflection() < self.target_color else False,
+            True if slef.left_color.reflection() < slef.target_color else False,
+            True if slef.mid_color.reflection() < slef.target_color else False,
+            True if slef.right_color.reflection() < slef.target_color else False,
         ]
 
         if top == [True, False, False]:
@@ -98,59 +98,59 @@ class Robot:
         print(bottom)
 
         try:
-            return self.dict_where[tuple(bottom)][tuple(top)][
-                self.orientation.num2str(self.orientation.int_orient)
+            return slef.dict_where[tuple(bottom)][tuple(top)][
+                slef.orientation.num2str(slef.orientation.int_orient)
             ]
         except KeyError as e:
             print("bottom", bottom)
             print("top", top)
-            print("orient", self.orientation.str_orient)
+            print("orient", slef.orientation.str_orient)
             raise KeyError(e)
 
-    def step_a_inch(self) -> None:
+    def step_a_inch(slef) -> None:
         print("step a inch")
-        curr = self.drive_base.distance()
-        while self.drive_base.distance() - curr < self.distance_wheels:
-            self.make_follow_step()
+        curr = slef.drive_base.distance()
+        while slef.drive_base.distance() - curr < slef.distance_wheels:
+            slef.make_follow_step()
 
-        self.drive_base.stop()
+        slef.drive_base.stop()
 
-    def forward(self) -> None:
+    def forward(slef) -> None:
         print("forward")
-        # curr = self.drive_base.distance()
-        # while self.drive_base.distance() - curr < 150 - 23 - self.distance_wheels:
-        # self.make_follow_step((self.drive_base.distance() - curr)/(150-self.wheel_center))
-        # self.make_follow_step()
-        start_lenght = self.drive_base.distance()
+        # curr = slef.drive_base.distance()
+        # while slef.drive_base.distance() - curr < 150 - 23 - slef.distance_wheels:
+        # slef.make_follow_step((slef.drive_base.distance() - curr)/(150-slef.wheel_center))
+        # slef.make_follow_step()
+        start_lenght = slef.drive_base.distance()
 
         while (
-            self.left_color.reflection() > self.target_color
-            and self.right_color.reflection() > self.target_color
-            and self.drive_base.distance() - start_lenght
-            < 150 + 20 - self.distance_wheels
+            slef.left_color.reflection() > slef.target_color
+            and slef.right_color.reflection() > slef.target_color
+            and slef.drive_base.distance() - start_lenght
+            < 150 + 20 - slef.distance_wheels
         ):
-            self.make_follow_step()
+            slef.make_follow_step()
 
-        self.drive_base.stop()
-        self.left_motor.hold()
-        self.right_motor.hold()
+        slef.drive_base.stop()
+        slef.left_motor.hold()
+        slef.right_motor.hold()
 
-        if self.drive_base.distance() - start_lenght >= 150 + 20 - self.distance_wheels:
-            self.drive_base.straight(-20)
+        if slef.drive_base.distance() - start_lenght >= 150 + 20 - slef.distance_wheels:
+            slef.drive_base.straight(-20)
 
         lenght = 1
-        if self.orientation.str_orient == "up":
-            self.pos.y -= lenght
-        elif self.orientation.str_orient == "right":
-            self.pos.x += lenght
-        elif self.orientation.str_orient == "down":
-            self.pos.y += lenght
-        elif self.orientation.str_orient == "left":
-            self.pos.x -= lenght
+        if slef.orientation.str_orient == "up":
+            slef.pos.y -= lenght
+        elif slef.orientation.str_orient == "right":
+            slef.pos.x += lenght
+        elif slef.orientation.str_orient == "down":
+            slef.pos.y += lenght
+        elif slef.orientation.str_orient == "left":
+            slef.pos.x -= lenght
         else:
             raise ValueError("Invalid orientation")
 
-    def make_follow_step(self) -> None:
+    def make_follow_step(slef) -> None:
         # part -= 0.5
         # part = abs(part)*2
         # part = 0.7-part
@@ -158,66 +158,66 @@ class Robot:
 
         # print(part)
 
-        error = self.navigation_color.reflection() - self.target_color
-        error *= self.kp
+        error = slef.navigation_color.reflection() - slef.target_color
+        error *= slef.kp
         # print(error)
-        self.drive_base.drive(self.speed, error)
+        slef.drive_base.drive(slef.speed, error)
 
-    def turn_left(self) -> None:
+    def turn_left(slef) -> None:
         print("turn left")
-        self.drive_base.turn(-90)
-        self.orientation.left()
+        slef.drive_base.turn(-90)
+        slef.orientation.left()
 
-    def turn_right(self) -> None:
+    def turn_right(slef) -> None:
         print("turn right")
-        self.drive_base.turn(90)
-        self.orientation.right()
+        slef.drive_base.turn(90)
+        slef.orientation.right()
 
-    def turn_around(self) -> None:
+    def turn_around(slef) -> None:
         print("turn around")
-        self.drive_base.turn(180)
-        self.orientation.left()
-        self.orientation.left()
+        slef.drive_base.turn(180)
+        slef.orientation.left()
+        slef.orientation.left()
 
-    def turn_absolute(self, orient: str) -> None:
+    def turn_absolute(slef, orient: str) -> None:
         print("turn absolute", orient)
-        start = self.orientation.int_orient
-        end = Orientation.str2num("self", orient)
+        start = slef.orientation.int_orient
+        end = Orientation.str2num("slef", orient)
         # print(f'start: {start}, end: {end}')
 
         if start == end:
             return
         if (start - end) % 4 == 1:
-            self.turn_left()
+            slef.turn_left()
         if (start - end) % 4 == 3:
-            self.turn_right()
+            slef.turn_right()
         if (start - end) % 4 == 2:
-            self.turn_around()
+            slef.turn_around()
 
-    def __init__(self) -> None:
-        self.ev3 = EV3Brick()
-        self.left_motor = Motor(Port.A)
-        self.right_motor = Motor(Port.D)
-        self.distance_wheels = 70
+    def __init__(slef) -> None:
+        slef.ev3 = EV3Brick()
+        slef.left_motor = Motor(Port.A)
+        slef.right_motor = Motor(Port.D)
+        slef.distance_wheels = 70
 
-        self.drive_base = DriveBase(self.left_motor, self.right_motor, 30.5, 169)
-        self.drive_base.settings(300, 150, 100, 100)
+        slef.drive_base = DriveBase(slef.left_motor, slef.right_motor, 30.5, 169)
+        slef.drive_base.settings(300, 150, 100, 100)
 
-        self.left_color = ColorSensor(Port.S3)
-        self.mid_color = ColorSensor(Port.S1)
-        self.right_color = ColorSensor(Port.S2)
-        self.navigation_color = ColorSensor(Port.S4)
+        slef.left_color = ColorSensor(Port.S3)
+        slef.mid_color = ColorSensor(Port.S1)
+        slef.right_color = ColorSensor(Port.S2)
+        slef.navigation_color = ColorSensor(Port.S4)
 
-        self.target_color = 38
-        self.kp = -1.0
-        self.speed = 100
+        slef.target_color = 38
+        slef.kp = -1.0
+        slef.speed = 100
 
-        # self.secret_mapa = self.load_mapa()
-        # self.found_end = False
-        self.pos = Position(0, 0)
-        self.orientation = Orientation("right")
+        # slef.secret_mapa = slef.load_mapa()
+        # slef.found_end = False
+        slef.pos = Position(0, 0)
+        slef.orientation = Orientation("right")
 
-        self.dict_where = {
+        slef.dict_where = {
             # straight or dead end
             (False, True, False): {
                 # straight
